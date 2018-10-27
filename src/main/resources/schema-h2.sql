@@ -9,6 +9,7 @@ create table User
    mail varchar(60),
    phone varchar(20),
    address varchar(255), 
+   user_type varchar(20), 
    profile_image TEXT
 );
 

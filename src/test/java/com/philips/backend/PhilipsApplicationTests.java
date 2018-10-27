@@ -79,7 +79,7 @@ public class PhilipsApplicationTests {
 
 	public void testAddUser() {
 
-		User user = new User("userName9", "password", new Date(), "ميسرة محمد", "title", "mail", "01282842176",1,  "address"); 
+		User user = new User("userName9", "password", new Date(), "ميسرة محمد", "title", "mail", "01282842176",1,  "address", "userType"); 
 		LOGGER.info("\nAdd User Request to : " + createURLWithPort("/users"));
 		LOGGER.info("\nAdd User Request : \n" + jsonConverter.objectToJson(user));
 
@@ -93,7 +93,7 @@ public class PhilipsApplicationTests {
 	}
 
 	public void testUpdateUser() {
-		User user = new User("userName", "password", new Date(), "ميسرة محمد", "title updated", "mail", "01282842176",1,  "address");
+		User user = new User("userName", "password", new Date(), "ميسرة محمد", "title updated", "mail", "01282842176",1,  "address", "userType");
 		;
 		LOGGER.info("\nPut User Request to : HOST:PORT/user/");
 		LOGGER.info("\nPut User Request : \n" + jsonConverter.objectToJson(user));

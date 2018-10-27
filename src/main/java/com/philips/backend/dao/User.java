@@ -38,6 +38,7 @@ public class User implements Serializable {
 	private String phone;
 	private String address;
 	private String profileImage;
+	private String userType; 
 
 	private Integer id;
 
@@ -77,11 +78,12 @@ public class User implements Serializable {
 	 * @param address
 	 */
 	public User(String userName, String password, Date birthDate, String name, String title, String mail, String phone,
-			Integer id, String address) {
+			Integer id, String address, String userType) {
 		this(name, userName, password, phone, mail, birthDate);
 		this.title = title;
 		this.address = address;
 		this.id = id;
+		this.userType = userType; 
 	}
 
 	/**
@@ -250,6 +252,20 @@ public class User implements Serializable {
 	 */
 	public void setLocation(Set<Location> location) {
 		this.location = location;
+	}
+
+	/**
+	 * @return the userType
+	 */
+	public String getUserType() {
+		return userType;
+	}
+
+	/**
+	 * @param userType the userType to set
+	 */
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	/*
