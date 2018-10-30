@@ -4,13 +4,10 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 
 /**
  * @author maysara.mohamed
@@ -20,7 +17,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class SubmitedInvoice {
-	private Integer id;
+	// private Integer id;
 	private Date invoiceDate;
 	private String extras;
 	// EX : matched, failed, scheduled.
@@ -60,7 +57,7 @@ public class SubmitedInvoice {
 	 */
 	public SubmitedInvoice(Integer id, Date invoiceDate, String extras, String status) {
 		this(invoiceDate, extras, status);
-		this.id = id;
+		// this.id = id;
 	}
 
 	/**
@@ -111,19 +108,19 @@ public class SubmitedInvoice {
 	/**
 	 * @return the id
 	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	//// @Id
+	//// @GeneratedValue(strategy = GenerationType.IDENTITY)
+	// public Integer getId() {
+	// return id;
+	// }
+	//
+	// /**
+	// * @param id
+	// * the id to set
+	// */
+	// public void setId(Integer id) {
+	// this.id = id;
+	// }
 
 	/**
 	 * @return the user
@@ -145,6 +142,7 @@ public class SubmitedInvoice {
 	/**
 	 * @return the salesId
 	 */
+	@Id
 	public String getSalesId() {
 		return salesId;
 	}
@@ -157,7 +155,6 @@ public class SubmitedInvoice {
 		this.salesId = salesId;
 	}
 
-	
 	/**
 	 * @return the submitedInvoiceCategories
 	 */
@@ -167,7 +164,8 @@ public class SubmitedInvoice {
 	}
 
 	/**
-	 * @param submitedInvoiceCategories the submitedInvoiceCategories to set
+	 * @param submitedInvoiceCategories
+	 *            the submitedInvoiceCategories to set
 	 */
 	public void setSubmitedInvoiceCategories(Set<SubmitedInvoiceCategories> submitedInvoiceCategories) {
 		this.submitedInvoiceCategories = submitedInvoiceCategories;
@@ -180,8 +178,7 @@ public class SubmitedInvoice {
 	 */
 	@Override
 	public String toString() {
-		return "SubmitedInvoice [id=" + id + ", invoiceDate=" + invoiceDate + ", extras=" + extras + ", status="
-				+ status + "]";
+		return "SubmitedInvoice [ invoiceDate=" + invoiceDate + ", extras=" + extras + ", status=" + status + "]";
 	}
 
 }

@@ -55,12 +55,12 @@ create table category
 
 create table submited_invoice_categories
 (
-   id integer PRIMARY KEY AUTO_INCREMENT,
+   --id integer PRIMARY KEY AUTO_INCREMENT,
    sales_id varchar(50),
    category_id int, 
    net_sale double, 
    extras TEXT, 
-   -- PRIMARY KEY (sales_id, category_id), 
+   PRIMARY KEY (sales_id, category_id), 
    FOREIGN KEY (sales_id) REFERENCES submited_invoice(sales_id) ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -68,12 +68,12 @@ create table submited_invoice_categories
 
 create table philips_invoice_categories
 (
-   id integer PRIMARY KEY AUTO_INCREMENT,
+   --id integer PRIMARY KEY AUTO_INCREMENT,
    sales_id varchar(50),
    category_id int, 
    net_sale double, 
    extras TEXT, 
-   -- PRIMARY KEY (sales_id, category_id), 
+   PRIMARY KEY (sales_id, category_id), 
    FOREIGN KEY (sales_id) REFERENCES philips_invoice(sales_id) ON DELETE CASCADE ON UPDATE CASCADE,
    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

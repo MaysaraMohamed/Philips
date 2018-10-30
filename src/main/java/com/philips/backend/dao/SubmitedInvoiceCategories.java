@@ -16,8 +16,6 @@ import javax.persistence.ManyToOne;
 @Entity
 public class SubmitedInvoiceCategories {
 
-	// @EmbeddedId
-	// private int invoiceCategoryIdentity;
 	private Integer id;
 	private double netSale;
 	private String extras;
@@ -47,9 +45,9 @@ public class SubmitedInvoiceCategories {
 	 * @param categoryName
 	 * @param extras
 	 */
-	public SubmitedInvoiceCategories(String extras, double netSale, InvoiceCategoryIdentity invoiceCategoryIdentity) {
+	public SubmitedInvoiceCategories(String extras, double netSale, Integer id) {
 		this(extras, netSale);
-		// this.invoiceCategoryIdentity = invoiceCategoryIdentity;
+		this.id = id; 
 	}
 
 	/**
@@ -100,22 +98,6 @@ public class SubmitedInvoiceCategories {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-
-	// /**
-	// * @return the invoiceCategoryIdentity
-	// */
-	// public InvoiceCategoryIdentity getInvoiceCategoryIdentity() {
-	// return invoiceCategoryIdentity;
-	// }
-	//
-	// /**
-	// * @param invoiceCategoryIdentity
-	// * the invoiceCategoryIdentity to set
-	// */
-	// public void setInvoiceCategoryIdentity(InvoiceCategoryIdentity
-	// invoiceCategoryIdentity) {
-	// this.invoiceCategoryIdentity = invoiceCategoryIdentity;
-	// }
 
 	/**
 	 * @return the netSale
