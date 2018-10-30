@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.philips.backend.PhilipsApplication;
 import com.philips.backend.dao.Location;
-import com.philips.backend.dao.User;
+import com.philips.backend.dao.Users;
 
 /**
  * @author maysara.mohamed
@@ -64,12 +64,12 @@ public class PhilipsApplicationTests {
 	public void testSuccessLogin()
 	{
 		testAddUser();
-		User user = new User(); 
+		Users user = new Users(); 
 		user.setUserName("userName");
 		user.setPassword("password");
 		LOGGER.info("\nLogin User Request to : " + createURLWithPort("/login"));
 		LOGGER.info("\nLogin User Request : \n" + jsonConverter.objectToJson(user));
-		HttpEntity<User> entity = new HttpEntity<User>(user, headers);
+		HttpEntity<Users> entity = new HttpEntity<Users>(user, headers);
 		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/login"), HttpMethod.POST, entity,
 				String.class);
 		LOGGER.info("\nLogin User Response : \n" + response.getBody().toString());
@@ -79,11 +79,11 @@ public class PhilipsApplicationTests {
 
 	public void testAddUser() {
 
-		User user = new User("userName9", "password", new Date(), "ميسرة محمد", "title", "mail", "01282842176",1,  "address", "userType"); 
+		Users user = new Users("userName9", "password", new Date(), "ميسرة محمد", "title", "mail", "01282842176",  "address", "userType"); 
 		LOGGER.info("\nAdd User Request to : " + createURLWithPort("/users"));
 		LOGGER.info("\nAdd User Request : \n" + jsonConverter.objectToJson(user));
 
-		HttpEntity<User> entity = new HttpEntity<User>(user, headers);
+		HttpEntity<Users> entity = new HttpEntity<Users>(user, headers);
 		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/users"), HttpMethod.POST, entity,
 				String.class);
 		LOGGER.info("\nAdd User Response : \n" + response.getBody());
@@ -93,12 +93,12 @@ public class PhilipsApplicationTests {
 	}
 
 	public void testUpdateUser() {
-		User user = new User("userName", "password", new Date(), "ميسرة محمد", "title updated", "mail", "01282842176",1,  "address", "userType");
+		Users user = new Users("userName", "password", new Date(), "ميسرة محمد", "title updated", "mail", "01282842176",  "address", "userType");
 		;
 		LOGGER.info("\nPut User Request to : HOST:PORT/user/");
 		LOGGER.info("\nPut User Request : \n" + jsonConverter.objectToJson(user));
 
-		HttpEntity<User> entity = new HttpEntity<User>(user, headers);
+		HttpEntity<Users> entity = new HttpEntity<Users>(user, headers);
 		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/user"), HttpMethod.PUT,
 				entity, String.class);
 		LOGGER.info("\nPut User response status : " + response.getStatusCodeValue());
@@ -111,9 +111,9 @@ public class PhilipsApplicationTests {
 	}
 
 	public void testDeleteUser() {
-		User user = new User();
+		Users user = new Users();
 		LOGGER.info("\nDelete User Request to : HOST:PORT/users/" + userID);
-		HttpEntity<User> entity = new HttpEntity<User>(user, headers);
+		HttpEntity<Users> entity = new HttpEntity<Users>(user, headers);
 		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/users/" + userID),
 				HttpMethod.DELETE, entity, String.class);
 		LOGGER.info("\nDelete User response status : " + response.getStatusCodeValue());

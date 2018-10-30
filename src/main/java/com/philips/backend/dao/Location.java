@@ -27,8 +27,9 @@ public class Location implements Serializable {
 	private Double latitude;
 	private Double longitude;
 	private Integer id;
+	private String extras; 
 
-	private User user;
+	private Users user;
 
 	/**
 	 * @param locationId
@@ -97,8 +98,8 @@ public class Location implements Serializable {
 	 * @return the user
 	 */
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	public User getUser() {
+	@JoinColumn(name = "user_name")
+	public Users getUser() {
 		return user;
 	}
 
@@ -106,8 +107,23 @@ public class Location implements Serializable {
 	 * @param user
 	 *            the user to set
 	 */
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
+	}
+	
+
+	/**
+	 * @return the extras
+	 */
+	public String getExtras() {
+		return extras;
+	}
+
+	/**
+	 * @param extras the extras to set
+	 */
+	public void setExtras(String extras) {
+		this.extras = extras;
 	}
 
 	/*

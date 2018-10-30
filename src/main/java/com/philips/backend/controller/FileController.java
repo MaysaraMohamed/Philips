@@ -21,12 +21,12 @@ public class FileController {
 	private String excelPath;
 	
 	// should be updated to return error code.
-	@RequestMapping(method = RequestMethod.GET, value = "/load")
+	@RequestMapping(method = RequestMethod.GET, value = "/loadUsers")
 	public String loadDataToDB() {
 
 		try {
 		String filePath = fileManagement.readFilesFromDirectory("xlsx", excelPath);
-		fileManagement.readContentFromExcel(filePath);
+		fileManagement.readUsersFromExcel(filePath);
 		}catch (Exception e) {
 			LOGGER.warning(e.toString());
 			return "Something wong please try again later"; 

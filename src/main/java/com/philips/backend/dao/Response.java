@@ -3,6 +3,7 @@ package com.philips.backend.dao;
 public class Response {
 	private String message; 
 	private int status;
+	private String extras; 
 	
 	
 	
@@ -44,6 +45,20 @@ public class Response {
 	 */
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	
+	/**
+	 * @return the extras
+	 */
+	public String getExtras() {
+		return extras;
+	}
+	/**
+	 * @param extras the extras to set
+	 */
+	public void setExtras(String extras) {
+		this.extras = extras;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -13,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.philips.backend.common.Utilities;
-import com.philips.backend.dao.User;
+import com.philips.backend.controller.FileController;
+import com.philips.backend.dao.Users;
 import com.philips.backend.repository.UserRepository;
 
 //import javafx.scene.control.Cell;
@@ -23,6 +25,7 @@ public class FileManagement {
 
 	@Autowired
 	private UserRepository userRepository;
+	private static final Logger LOGGER = Logger.getLogger(FileController.class.getName());
 
 	/*
 	 * Function to read files from directory by extension.
@@ -56,7 +59,7 @@ public class FileManagement {
 	 * 
 	 * @param filePath
 	 */
-	public void readContentFromExcel(String filePath) {
+	public void readUsersFromExcel(String filePath) {
 		FileInputStream fis = null;
 		String userType=""; 
 		// set customer type based on Input file. 
@@ -86,7 +89,7 @@ public class FileManagement {
 			org.apache.poi.ss.usermodel.Row row = rowIterator.next();
 			// For each row, iterate through each columns
 			Iterator<Cell> cellIterator = row.cellIterator();
-			User user = new User();
+			Users user = new Users();
 			while (cellIterator.hasNext()) {
 				Cell cell = cellIterator.next();
 				switch (cell.getCellType()) {
@@ -113,9 +116,11 @@ public class FileManagement {
 				default:
 				}
 			}
-//			System.out.print(user.toString() + "\n");
-//			System.out.println("");
-			userRepository.save(user); 
+			System.out.print(user.toString() + "\n");
+			System.out.println("");
+			if(user.getUserName() != null) {
+				userRepository.save(user);
+			}
 		}
 	}
 }

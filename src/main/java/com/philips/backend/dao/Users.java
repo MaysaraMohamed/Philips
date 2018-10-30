@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 import com.philips.backend.encryption.Encryption;
 
@@ -21,7 +20,7 @@ import com.philips.backend.encryption.Encryption;
  */
 
 @Entity
-public class User implements Serializable {
+public class Users implements Serializable {
 
 	/**
 	 * 
@@ -38,13 +37,16 @@ public class User implements Serializable {
 	private String phone;
 	private String address;
 	private String profileImage;
-	private String userType; 
+	private String userType;
+	private String extras;
 
-	private Integer id;
+//	private Integer id;
 
 	private Set<Location> location;
-
-	public User() {
+	private Set<SubmitedInvoice> submitedInvoice;
+	private Set<PhilipsInvoice> philipsInvoice;
+	
+	public Users() {
 
 	}
 
@@ -56,7 +58,7 @@ public class User implements Serializable {
 	 * @param role
 	 * @param groups
 	 */
-	public User(String name, String userName, String password, String phone, String mail, Date birthDate) {
+	public Users(String name, String userName, String password, String phone, String mail, Date birthDate) {
 		super();
 		this.name = name;
 		this.userName = userName;
@@ -77,13 +79,13 @@ public class User implements Serializable {
 	 * @param id
 	 * @param address
 	 */
-	public User(String userName, String password, Date birthDate, String name, String title, String mail, String phone,
-			Integer id, String address, String userType) {
+	public Users(String userName, String password, Date birthDate, String name, String title, String mail, String phone,
+			 String address, String userType) {
 		this(name, userName, password, phone, mail, birthDate);
 		this.title = title;
 		this.address = address;
-		this.id = id;
-		this.userType = userType; 
+//		this.id = id;
+		this.userType = userType;
 	}
 
 	/**
@@ -149,23 +151,24 @@ public class User implements Serializable {
 	/**
 	 * @return the id
 	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	public Integer getId() {
+//		return id;
+//	}
+//
+//	/**
+//	 * @param id
+//	 *            the id to set
+//	 */
+//	public void setId(Integer id) {
+//		this.id = id;
+//	}
 
 	/**
 	 * @return the userName
 	 */
+	@Id
 	public String getUserName() {
 		return userName;
 	}
@@ -190,7 +193,7 @@ public class User implements Serializable {
 	 *            the password to set
 	 */
 	public void setPassword(String password) {
-			this.password = password;
+		this.password = password;
 	}
 
 	/**
@@ -253,6 +256,38 @@ public class User implements Serializable {
 	public void setLocation(Set<Location> location) {
 		this.location = location;
 	}
+	
+
+	/**
+	 * @return the submitedInvoice
+	 */
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	public Set<SubmitedInvoice> getSubmitedInvoice() {
+		return submitedInvoice;
+	}
+
+	/**
+	 * @param submitedInvoice the submitedInvoice to set
+	 */
+	public void setSubmitedInvoice(Set<SubmitedInvoice> submitedInvoice) {
+		this.submitedInvoice = submitedInvoice;
+	}
+
+	
+	/**
+	 * @return the philipsInvoice
+	 */
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	public Set<PhilipsInvoice> getPhilipsInvoice() {
+		return philipsInvoice;
+	}
+
+	/**
+	 * @param philipsInvoice the philipsInvoice to set
+	 */
+	public void setPhilipsInvoice(Set<PhilipsInvoice> philipsInvoice) {
+		this.philipsInvoice = philipsInvoice;
+	}
 
 	/**
 	 * @return the userType
@@ -262,10 +297,26 @@ public class User implements Serializable {
 	}
 
 	/**
-	 * @param userType the userType to set
+	 * @param userType
+	 *            the userType to set
 	 */
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+
+	/**
+	 * @return the extras
+	 */
+	public String getExtras() {
+		return extras;
+	}
+
+	/**
+	 * @param extras
+	 *            the extras to set
+	 */
+	public void setExtras(String extras) {
+		this.extras = extras;
 	}
 
 	/*
@@ -277,7 +328,7 @@ public class User implements Serializable {
 	public String toString() {
 		return "User [userName=" + userName + ", password=" + password + ", birthDate=" + birthDate + ", name=" + name
 				+ ", title=" + title + ", mail=" + mail + ", phone=" + phone + ", address=" + address
-				+ ", profileImage=" + profileImage + ", id=" + id + "]";
+				+ ", profileImage=" + profileImage +  "]";
 	}
 
 }
