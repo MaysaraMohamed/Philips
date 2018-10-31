@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "com.philips.backend.excel.users.path",
-  "type": "java.lang.String",
-  "description": "A description for 'com.philips.backend.excel.users.path'"
-}]}
+{"properties": [
+  {
+    "name": "com.philips.backend.excel.users.path",
+    "type": "java.lang.String",
+    "description": "A description for 'com.philips.backend.excel.users.path'"
+  },
+  {
+    "name": "com.philips.backend.excel.invoices.path",
+    "type": "java.lang.String",
+    "description": "A description for 'com.philips.backend.excel.invoices.path'"
+  }
+]}

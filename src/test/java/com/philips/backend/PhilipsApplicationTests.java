@@ -17,7 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.philips.backend.PhilipsApplication;
+import com.philips.backend.dao.Category;
 import com.philips.backend.dao.Location;
+import com.philips.backend.dao.PhilipsInvoice;
+import com.philips.backend.dao.SubmitedInvoice;
 import com.philips.backend.dao.Users;
 
 /**
@@ -32,7 +35,8 @@ public class PhilipsApplicationTests {
 
 	@LocalServerPort
 	private int port = Configurations.PORT;
-	private int userID;
+	private int userID, categoryID; 
+	String submitedInvoiceID, philipsInvoiceID;
 	private int locationID;
 
 	TestRestTemplate restTemplate = new TestRestTemplate();
@@ -43,7 +47,8 @@ public class PhilipsApplicationTests {
 
 	@Test
 	public void testAll() {
-		testUserRestAPIs();
+//		testUserRestAPIs();
+		testAddEntities();
 	}
 
 	public void testUserRestAPIs() {
@@ -60,7 +65,58 @@ public class PhilipsApplicationTests {
 		testSuccessLogin(); 
 	}
 	
+	public void testAddEntities()
+	{
+		testAddCategory(); 
+		testAddPhilipsInvoice(); 
+		testAddSubmitedInvoice(); 
+	}
 	
+	
+	private void testAddCategory() {
+		Category category = new Category("userName9", "Extras");  
+		LOGGER.info("\nAdd Category Request to : " + createURLWithPort("/categories"));
+		LOGGER.info("\nAdd Category Request : \n" + jsonConverter.objectToJson(category));
+
+		HttpEntity<Category> entity = new HttpEntity<Category>(category, headers);
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/categories"), HttpMethod.POST, entity,
+				String.class);
+		LOGGER.info("\nAdd Category Response : \n" + response.getBody());
+		LOGGER.info("\nAdd Category status : " + response.getStatusCodeValue());
+		categoryID = getID(response.getBody().toString(), "/categories");
+		assertEquals(201, response.getStatusCodeValue());
+	}
+
+	private void testAddSubmitedInvoice() {
+		SubmitedInvoice submitedInvoice = new SubmitedInvoice(new Date(), "extras", "Invoice_"+categoryID,"SCHEDULED");  
+		LOGGER.info("\nAdd SubmitedInvoice Request to : " + createURLWithPort("/submitedInvoices"));
+		LOGGER.info("\nAdd SubmitedInvoice Request : \n" + jsonConverter.objectToJson(submitedInvoice));
+
+		HttpEntity<SubmitedInvoice> entity = new HttpEntity<SubmitedInvoice>(submitedInvoice, headers);
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/submitedInvoices"), HttpMethod.POST, entity,
+				String.class);
+		LOGGER.info("\nAdd SubmitedInvoice Response : \n" + response.getBody());
+		LOGGER.info("\nAdd SubmitedInvoice status : " + response.getStatusCodeValue());
+		submitedInvoiceID = getStringID(response.getBody().toString(), "/submitedInvoices");
+		LOGGER.info("\nID is  : " + submitedInvoiceID);
+		assertEquals(201, response.getStatusCodeValue());
+	}
+
+	private void testAddPhilipsInvoice() {
+		PhilipsInvoice philipsInvoice = new PhilipsInvoice(new Date(), "extras", "Invoice_"+categoryID);  
+		LOGGER.info("\nAdd PhilipsInvoice Request to : " + createURLWithPort("/philipsInvoices"));
+		LOGGER.info("\nAdd PhilipsInvoice Request : \n" + jsonConverter.objectToJson(philipsInvoice));
+
+		HttpEntity<PhilipsInvoice> entity = new HttpEntity<PhilipsInvoice>(philipsInvoice, headers);
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/philipsInvoices"), HttpMethod.POST, entity,
+				String.class);
+		LOGGER.info("\nAdd PhilipsInvoice Response : \n" + response.getBody());
+		LOGGER.info("\nAdd PhilipsInvoice status : " + response.getStatusCodeValue());
+		philipsInvoiceID = getStringID(response.getBody().toString(), "/philipsInvoices");
+		LOGGER.info("\nID is  : " + philipsInvoiceID);
+		assertEquals(201, response.getStatusCodeValue());	
+	}
+
 	public void testSuccessLogin()
 	{
 		testAddUser();
@@ -208,6 +264,11 @@ public class PhilipsApplicationTests {
 	private int getID(String result, String url) {
 		String r2 = result.substring(result.indexOf(url) + url.length() + 1);
 		int id = Integer.parseInt(r2.substring(0, r2.indexOf("\n") - 1).replace("\"", ""));
+		return id;
+	}
+	
+	private String getStringID(String result, String url) {
+		String id = result.substring(result.indexOf(url) + url.length()+1).replace("\"", "");
 		return id;
 	}
 

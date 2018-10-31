@@ -132,14 +132,14 @@ public class Category {
 		this.submitedInvoiceCategories = submitedInvoiceCategories;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", categoryName=" + categoryName + ", extras=" + extras + "]";
+		return "Category [id=" + id + ", categoryName=" + categoryName + ", extras=" + extras
+				+ ", philipsInvoiceCategories=" + philipsInvoiceCategories + ", submitedInvoiceCategories="
+				+ submitedInvoiceCategories + "]";
 	}
 
 }

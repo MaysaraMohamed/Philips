@@ -119,14 +119,12 @@ public class PhilipsInvoice {
 		this.philipsInvoiceCategories = philipsInvoiceCategories;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "PhilipsInvoice [invoiceDate=" + invoiceDate + ", extras=" + extras + "]";
+		return "PhilipsInvoice [invoiceDate=" + invoiceDate + ", extras=" + extras + ", salesId=" + salesId + ", user="
+				+ user + ", philipsInvoiceCategories=" + philipsInvoiceCategories + "]";
 	}
-
 }

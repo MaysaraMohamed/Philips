@@ -3,7 +3,6 @@ package com.philips.backend.repository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import com.philips.backend.dao.Location;
 import com.philips.backend.dao.SubmitedInvoice;
 
 /**

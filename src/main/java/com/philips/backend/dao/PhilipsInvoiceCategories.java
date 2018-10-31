@@ -102,8 +102,6 @@ public class PhilipsInvoiceCategories {
 	/**
 	 * @return the netSale
 	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public double getNetSale() {
 		return netSale;
 	}
@@ -111,6 +109,8 @@ public class PhilipsInvoiceCategories {
 	/**
 	 * @return the id
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
 		return id;
 	}
@@ -131,4 +131,12 @@ public class PhilipsInvoiceCategories {
 		this.netSale = netSale;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "PhilipsInvoiceCategories [id=" + id + ", netSale=" + netSale + ", extras=" + extras
+				+ ", philipsInvoice=" + philipsInvoice + ", category=" + category + "]";
+	}
 }

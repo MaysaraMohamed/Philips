@@ -42,22 +42,17 @@ public class SubmitedInvoice {
 	 * @param extras
 	 * @param status
 	 */
-	public SubmitedInvoice(Date invoiceDate, String extras, String status) {
+	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status) {
 		super();
+		this.salesId = salesId;
 		this.invoiceDate = invoiceDate;
 		this.extras = extras;
-		this.status = status;
+		this.status = status; 
 	}
-
-	/**
-	 * @param id
-	 * @param invoiceDate
-	 * @param extras
-	 * @param status
-	 */
-	public SubmitedInvoice(Integer id, Date invoiceDate, String extras, String status) {
-		this(invoiceDate, extras, status);
-		// this.id = id;
+	
+	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status, Set<SubmitedInvoiceCategories> submitedInvoiceCategories) {
+		this(invoiceDate, extras, salesId, status);
+		this.submitedInvoiceCategories = submitedInvoiceCategories; 
 	}
 
 	/**

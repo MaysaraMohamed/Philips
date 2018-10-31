@@ -11,5 +11,5 @@ import com.philips.backend.dao.PhilipsInvoice;
  * @since 2018-08-20
  */
 @RepositoryRestResource(collectionResourceRel = "philipsInvoices", path = "philipsInvoices")
-public interface PhilipsInvoiceRepository extends PagingAndSortingRepository<PhilipsInvoice, Integer> {
+public interface PhilipsInvoiceRepository extends PagingAndSortingRepository<PhilipsInvoice, String> {
 }
