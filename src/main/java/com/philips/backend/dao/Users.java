@@ -6,11 +6,11 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.philips.backend.encryption.Encryption;
 
 /**
@@ -40,12 +40,12 @@ public class Users implements Serializable {
 	private String userType;
 	private String extras;
 
-//	private Integer id;
+	// private Integer id;
 
 	private Set<Location> location;
 	private Set<SubmitedInvoice> submitedInvoice;
 	private Set<PhilipsInvoice> philipsInvoice;
-	
+
 	public Users() {
 
 	}
@@ -80,11 +80,11 @@ public class Users implements Serializable {
 	 * @param address
 	 */
 	public Users(String userName, String password, Date birthDate, String name, String title, String mail, String phone,
-			 String address, String userType) {
+			String address, String userType) {
 		this(name, userName, password, phone, mail, birthDate);
 		this.title = title;
 		this.address = address;
-//		this.id = id;
+		// this.id = id;
 		this.userType = userType;
 	}
 
@@ -151,19 +151,19 @@ public class Users implements Serializable {
 	/**
 	 * @return the id
 	 */
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	public Integer getId() {
-//		return id;
-//	}
-//
-//	/**
-//	 * @param id
-//	 *            the id to set
-//	 */
-//	public void setId(Integer id) {
-//		this.id = id;
-//	}
+	// @Id
+	// @GeneratedValue(strategy = GenerationType.IDENTITY)
+	// public Integer getId() {
+	// return id;
+	// }
+	//
+	// /**
+	// * @param id
+	// * the id to set
+	// */
+	// public void setId(Integer id) {
+	// this.id = id;
+	// }
 
 	/**
 	 * @return the userName
@@ -244,6 +244,7 @@ public class Users implements Serializable {
 	/**
 	 * @return the location
 	 */
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	public Set<Location> getLocation() {
 		return location;
@@ -256,34 +257,36 @@ public class Users implements Serializable {
 	public void setLocation(Set<Location> location) {
 		this.location = location;
 	}
-	
 
 	/**
 	 * @return the submitedInvoice
 	 */
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	public Set<SubmitedInvoice> getSubmitedInvoice() {
 		return submitedInvoice;
 	}
 
 	/**
-	 * @param submitedInvoice the submitedInvoice to set
+	 * @param submitedInvoice
+	 *            the submitedInvoice to set
 	 */
 	public void setSubmitedInvoice(Set<SubmitedInvoice> submitedInvoice) {
 		this.submitedInvoice = submitedInvoice;
 	}
 
-	
 	/**
 	 * @return the philipsInvoice
 	 */
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	public Set<PhilipsInvoice> getPhilipsInvoice() {
 		return philipsInvoice;
 	}
 
 	/**
-	 * @param philipsInvoice the philipsInvoice to set
+	 * @param philipsInvoice
+	 *            the philipsInvoice to set
 	 */
 	public void setPhilipsInvoice(Set<PhilipsInvoice> philipsInvoice) {
 		this.philipsInvoice = philipsInvoice;
@@ -328,7 +331,7 @@ public class Users implements Serializable {
 	public String toString() {
 		return "User [userName=" + userName + ", password=" + password + ", birthDate=" + birthDate + ", name=" + name
 				+ ", title=" + title + ", mail=" + mail + ", phone=" + phone + ", address=" + address
-				+ ", profileImage=" + profileImage +  "]";
+				+ ", profileImage=" + profileImage + "]";
 	}
 
 }

@@ -31,36 +31,29 @@ public class UserController {
 	private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
 
 	@RequestMapping(method = RequestMethod.POST, value = "/login")
-	public Response checkLogin(@RequestBody Users user) {
-		Response response = new Response();
+	public Users checkLogin(@RequestBody Users user) {
+		// Response response = new Response();
 		List<Users> usersList = userRepository.findByUserName(user.getUserName());
 		if (usersList.size() == 0) {
-			response.setMessage("Unauthorized");
-			response.setStatus(401);
 			LOGGER.info("User is : Unauthorized");
+			return null;
 		} else if (Encryption.encrypt(user.getPassword()).equals(usersList.get(0).getPassword())) {
-			response.setMessage("SUCCESS");
-			response.setStatus(200);
 			LOGGER.info("User login successfully");
+			return usersList.get(0);
 		} else {
-			response.setMessage("Forbidden");
-			response.setStatus(403);
 			LOGGER.info("User is : Forbidden");
+			return null;
 		}
-		return response;
 	}
 
 	// put user based on sent data on user object in request.
 	@RequestMapping(method = RequestMethod.PUT, value = "/user")
-	public Response updateUser(@RequestBody Users user) {
-		Response response = new Response();
+	public Users updateUser(@RequestBody Users user) {
 		List<Users> usersList = userRepository.findByUserName(user.getUserName());
 		Users DBUser;
 
 		if (usersList.size() == 1) {
 			DBUser = usersList.get(0);
-			// DBUser.setId(DBUser.getId());
-
 			if (user.getPassword() != null && !user.getPassword().equals("")) {
 				DBUser.setPassword(Encryption.encrypt(user.getPassword()));
 			}
@@ -70,7 +63,7 @@ public class UserController {
 			if (user.getUserName() != null && !user.getUserName().equals("")) {
 				DBUser.setUserName(user.getUserName());
 			}
-			if (user.getBirthDate() != null && !user.getBirthDate().equals("")) {
+			if (user.getBirthDate() != null) {
 				DBUser.setBirthDate(user.getBirthDate());
 			}
 			if (user.getTitle() != null && !user.getTitle().equals("")) {
@@ -91,15 +84,10 @@ public class UserController {
 			if (user.getProfileImage() != null && !user.getProfileImage().equals("")) {
 				DBUser.setProfileImage(user.getProfileImage());
 			}
-
-			userRepository.save(DBUser);
-			response.setStatus(200);
-			response.setMessage(DBUser.getUserName());
+			return userRepository.save(DBUser);
 		} else {
-			response.setStatus(404);
-			response.setMessage("Not Found");
+			return null;
 		}
-		return response;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/sendpassword")

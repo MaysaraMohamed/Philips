@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author maysara.mohamed
  * @version 1.0
@@ -47,12 +49,13 @@ public class SubmitedInvoice {
 		this.salesId = salesId;
 		this.invoiceDate = invoiceDate;
 		this.extras = extras;
-		this.status = status; 
+		this.status = status;
 	}
-	
-	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status, Set<SubmitedInvoiceCategories> submitedInvoiceCategories) {
+
+	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status,
+			Set<SubmitedInvoiceCategories> submitedInvoiceCategories) {
 		this(invoiceDate, extras, salesId, status);
-		this.submitedInvoiceCategories = submitedInvoiceCategories; 
+		this.submitedInvoiceCategories = submitedInvoiceCategories;
 	}
 
 	/**
@@ -120,6 +123,8 @@ public class SubmitedInvoice {
 	/**
 	 * @return the user
 	 */
+
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_name")
 	public Users getUser() {

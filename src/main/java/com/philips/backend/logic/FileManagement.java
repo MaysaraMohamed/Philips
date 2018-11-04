@@ -185,10 +185,10 @@ public class FileManagement {
 				String salesId = invoiceRecored.get(1); 
 				philipsInvoice.setSalesId(salesId);
 				// to delete old invoice if exist and insert again. 
-				if (philipsInvoiceRepository.findById(salesId).isPresent() && cleanOnce) {
-					philipsInvoiceCategoriesRepository.deleteByPhilipsInvoice(philipsInvoice);
-					cleanOnce = false; 
-				}
+//				if (philipsInvoiceRepository.findById(salesId).isPresent() && cleanOnce) {
+//					philipsInvoiceCategoriesRepository.deleteByPhilipsInvoice(philipsInvoice);
+//					cleanOnce = false; 
+//				}
 					System.out.print(invoiceRecored.toString() + "\n");
 					philipsInvoiceCategories.setNetSale(Double.parseDouble(invoiceRecored.get(5)));
 					// prepare Philips invoice relation
