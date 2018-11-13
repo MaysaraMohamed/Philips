@@ -21,10 +21,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class SubmitedInvoice {
 	// private Integer id;
 	private Date invoiceDate;
+	private Date submissionDate; 
 	private String extras;
 	// EX : matched, failed, scheduled.
 	private String status;
 	private String salesId;
+	private double invoicePoints; 
 
 	private Set<SubmitedInvoiceCategories> submitedInvoiceCategories; // one2many
 	private Users user;
@@ -44,17 +46,18 @@ public class SubmitedInvoice {
 	 * @param extras
 	 * @param status
 	 */
-	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status) {
+	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status, double invoicePoints) {
 		super();
 		this.salesId = salesId;
 		this.invoiceDate = invoiceDate;
 		this.extras = extras;
 		this.status = status;
+		this.invoicePoints = invoicePoints; 
 	}
 
-	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status,
+	public SubmitedInvoice(Date invoiceDate, String extras, String salesId, String status, double invoicePoints, 
 			Set<SubmitedInvoiceCategories> submitedInvoiceCategories) {
-		this(invoiceDate, extras, salesId, status);
+		this(invoiceDate, extras, salesId, status, invoicePoints);
 		this.submitedInvoiceCategories = submitedInvoiceCategories;
 	}
 
@@ -103,22 +106,21 @@ public class SubmitedInvoice {
 		this.status = status;
 	}
 
+
+
 	/**
-	 * @return the id
+	 * @return the submissionDate
 	 */
-	//// @Id
-	//// @GeneratedValue(strategy = GenerationType.IDENTITY)
-	// public Integer getId() {
-	// return id;
-	// }
-	//
-	// /**
-	// * @param id
-	// * the id to set
-	// */
-	// public void setId(Integer id) {
-	// this.id = id;
-	// }
+	public Date getSubmissionDate() {
+		return submissionDate;
+	}
+
+	/**
+	 * @param submissionDate the submissionDate to set
+	 */
+	public void setSubmissionDate(Date submissionDate) {
+		this.submissionDate = submissionDate;
+	}
 
 	/**
 	 * @return the user
@@ -158,7 +160,7 @@ public class SubmitedInvoice {
 	/**
 	 * @return the submitedInvoiceCategories
 	 */
-	@OneToMany(mappedBy = "philipsInvoice")
+	@OneToMany(mappedBy = "submitedInvoice")
 	public Set<SubmitedInvoiceCategories> getSubmitedInvoiceCategories() {
 		return submitedInvoiceCategories;
 	}
@@ -171,14 +173,29 @@ public class SubmitedInvoice {
 		this.submitedInvoiceCategories = submitedInvoiceCategories;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/**
+	 * @return the invoicePoints
+	 */
+	public double getInvoicePoints() {
+		return invoicePoints;
+	}
+
+	/**
+	 * @param invoicePoints the invoicePoints to set
+	 */
+	public void setInvoicePoints(double invoicePoints) {
+		this.invoicePoints = invoicePoints;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "SubmitedInvoice [ invoiceDate=" + invoiceDate + ", extras=" + extras + ", status=" + status + "]";
+		return "SubmitedInvoice [invoiceDate=" + invoiceDate + ", submissionDate=" + submissionDate + ", extras="
+				+ extras + ", status=" + status + ", salesId=" + salesId + ", invoicePoints=" + invoicePoints
+				+ ", submitedInvoiceCategories=" + submitedInvoiceCategories + ", user=" + user + "]";
 	}
 
 }

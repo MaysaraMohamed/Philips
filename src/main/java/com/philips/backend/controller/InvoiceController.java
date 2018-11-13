@@ -1,6 +1,7 @@
 package com.philips.backend.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -17,9 +18,15 @@ import com.philips.backend.common.Utilities;
 import com.philips.backend.dao.PhilipsInvoice;
 import com.philips.backend.dao.PhilipsInvoiceCategories;
 import com.philips.backend.dao.Response;
+import com.philips.backend.dao.SubmitedInvoice;
+import com.philips.backend.dao.SubmitedInvoiceCategories;
 import com.philips.backend.dao.Users;
+import com.philips.backend.repository.CategoryRepository;
 import com.philips.backend.repository.PhilipsInvoiceCategoriesRepository;
 import com.philips.backend.repository.PhilipsInvoiceRepository;
+import com.philips.backend.repository.PointsHistoryRepository;
+import com.philips.backend.repository.SubmitedInvoiceCategoriesRepository;
+import com.philips.backend.repository.SubmitedInvoiceRepository;
 import com.philips.backend.repository.UserRepository;
 
 @RestController
@@ -32,8 +39,19 @@ public class InvoiceController {
 	private PhilipsInvoiceRepository philipsInvoiceRepository;
 
 	@Autowired
+	private SubmitedInvoiceRepository submitedInvoiceRepository;
+
+	@Autowired
+	private SubmitedInvoiceCategoriesRepository submitedInvoiceCategoriesRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private PointsHistoryRepository pointsHistoryRepository;
 	private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
 
 	@RequestMapping("/philipsInvoice/{invoiceId}")
@@ -50,10 +68,42 @@ public class InvoiceController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/matchInvoices")
-	public Response checkLogin(@RequestBody Invoice submitedInvoice) {
+	// @RequestMapping(method = RequestMethod.POST, value = "/matchInvoices")
+	// public Response matchInvoice(@RequestBody Invoice submitedInvoice) {
+	// Response response = new Response();
+	// Invoice invoice = getPhilipsInvoice(submitedInvoice.getSalesId());
+	// if (invoice.getSalesId() == null) {
+	// response.setMessage("NOT FOUND");
+	// response.setStatus(404);
+	// LOGGER.info("Invoice is not found");
+	// } else if
+	// (!Utilities.ignoreTime(submitedInvoice.getInvoiceDate()).equals(invoice.getInvoiceDate()))
+	// {
+	// response.setMessage("DATE NOT MATCHED");
+	// response.setStatus(411);
+	// LOGGER.info("Invoice date not matched");
+	// } else if (!submitedInvoice.getUserName().equals(invoice.getUserName())) {
+	// response.setMessage("USERNAME NOT MATCHED");
+	// response.setStatus(410);
+	// LOGGER.info("Invoice UserName not matched");
+	// } else if (!Utilities.compareStringLists(submitedInvoice.getCategories(),
+	// invoice.getCategories())) {
+	// response.setMessage("CATEGORIES OR NET SALE ARE NOT MATCHED");
+	// response.setStatus(412);
+	// LOGGER.info("Invoice Categories or Net Sale are not matched");
+	// } else {
+	// response.setMessage("SUCCESS");
+	// response.setStatus(200);
+	// LOGGER.info("Invoice matched");
+	// }
+	// return response;
+	// }
+
+	// @RequestMapping("/matchInvoices/{invoiceId}")
+	public Response matchInvoice(String invoiceId) {
 		Response response = new Response();
-		Invoice invoice = getPhilipsInvoice(submitedInvoice.getSalesId());
+		Invoice submitedInvoice = getSubmitedInvoice(invoiceId);
+		Invoice invoice = getPhilipsInvoice(invoiceId);
 		if (invoice.getSalesId() == null) {
 			response.setMessage("NOT FOUND");
 			response.setStatus(404);
@@ -78,6 +128,34 @@ public class InvoiceController {
 		return response;
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value = "/submitInvoice")
+	public Response submitInvoice(@RequestBody Invoice invoice) {
+		Response response = new Response();
+		SubmitedInvoice submitedInvoice = new SubmitedInvoice();
+		submitedInvoice.setSalesId(invoice.getSalesId());
+		submitedInvoice.setUser(userRepository.findByUserName(invoice.getUserName()).get(0));
+		submitedInvoice.setExtras(invoice.getExtras());
+		submitedInvoice.setInvoiceDate(invoice.getInvoiceDate());
+		submitedInvoice.setSubmissionDate(new Date());
+		submitedInvoice.setStatus("SCHEDULED");
+		submitedInvoiceRepository.save(submitedInvoice);
+		List<String> categories = invoice.getCategories();
+		if (submitedInvoiceCategoriesRepository.findBySubmitedInvoice(submitedInvoice).size() > 0)
+			submitedInvoiceCategoriesRepository.deleteBySubmitedInvoice(submitedInvoice);
+		for (String category : categories) {
+			String categoryName = category.split(",")[0];
+			double netSale = Double.parseDouble(category.split(",")[1]);
+			SubmitedInvoiceCategories submitedInvoiceCategories = new SubmitedInvoiceCategories();
+			submitedInvoiceCategories.setCategory(categoryRepository.findByCategoryName(categoryName));
+			submitedInvoiceCategories.setNetSale(netSale);
+			submitedInvoiceCategories.setSubmitedInvoice(submitedInvoice);
+			submitedInvoiceCategoriesRepository.save(submitedInvoiceCategories);
+		}
+		response.setStatus(200);
+		response.setMessage("SUCCESS");
+		return response;
+	}
+
 	private Invoice getPhilipsInvoice(String invoiceId) {
 		String userName;
 		Invoice invoice = new Invoice();
@@ -96,6 +174,32 @@ public class InvoiceController {
 			invoice.setExtras(philipsInvoice.getExtras());
 			List<String> categoryList = new ArrayList<>();
 			for (PhilipsInvoiceCategories category : categories) {
+				categoryList.add(category.getCategory().getCategoryName() + "," + category.getNetSale());
+			}
+			invoice.setCategories(categoryList);
+			return invoice;
+		}
+		return invoice;
+	}
+
+	private Invoice getSubmitedInvoice(String invoiceId) {
+		String userName;
+		Invoice invoice = new Invoice();
+		SubmitedInvoice submitedInvoice;
+		Optional<SubmitedInvoice> submitedInvoiceOptional = submitedInvoiceRepository.findById(invoiceId);
+		if (submitedInvoiceOptional.isPresent()) {
+			submitedInvoice = submitedInvoiceOptional.get();
+			userName = submitedInvoice.getUser().getUserName();
+			Users user = userRepository.findById(userName).get();
+			List<SubmitedInvoiceCategories> categories = submitedInvoiceCategoriesRepository
+					.findBySubmitedInvoice(submitedInvoice);
+			invoice.setUserName(userName);
+			invoice.setName(user.getName());
+			invoice.setSalesId(submitedInvoice.getSalesId());
+			invoice.setInvoiceDate(submitedInvoice.getInvoiceDate());
+			invoice.setExtras(submitedInvoice.getExtras());
+			List<String> categoryList = new ArrayList<>();
+			for (SubmitedInvoiceCategories category : categories) {
 				categoryList.add(category.getCategory().getCategoryName() + "," + category.getNetSale());
 			}
 			invoice.setCategories(categoryList);

@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.philips.backend.encryption.Encryption;
 
 /**
@@ -30,6 +29,7 @@ public class Users implements Serializable {
 	private String userName;
 	private String password;
 	private Date birthDate;
+	private double totalPoints; 
 
 	private String name;
 	private String title;
@@ -45,6 +45,7 @@ public class Users implements Serializable {
 	private Set<Location> location;
 	private Set<SubmitedInvoice> submitedInvoice;
 	private Set<PhilipsInvoice> philipsInvoice;
+	private Set<PointsHistory> pointsHistory;
 
 	public Users() {
 
@@ -147,23 +148,6 @@ public class Users implements Serializable {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-
-	/**
-	 * @return the id
-	 */
-	// @Id
-	// @GeneratedValue(strategy = GenerationType.IDENTITY)
-	// public Integer getId() {
-	// return id;
-	// }
-	//
-	// /**
-	// * @param id
-	// * the id to set
-	// */
-	// public void setId(Integer id) {
-	// this.id = id;
-	// }
 
 	/**
 	 * @return the userName
@@ -292,6 +276,24 @@ public class Users implements Serializable {
 		this.philipsInvoice = philipsInvoice;
 	}
 
+	
+	
+	/**
+	 * @return the pointsHistory
+	 */
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	public Set<PointsHistory> getPointsHistory() {
+		return pointsHistory;
+	}
+
+	/**
+	 * @param pointsHistory the pointsHistory to set
+	 */
+	public void setPointsHistory(Set<PointsHistory> pointsHistory) {
+		this.pointsHistory = pointsHistory;
+	}
+
 	/**
 	 * @return the userType
 	 */
@@ -322,16 +324,30 @@ public class Users implements Serializable {
 		this.extras = extras;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * @return the totalPoints
+	 */
+	public double getTotalPoints() {
+		return totalPoints;
+	}
+
+	/**
+	 * @param totalPoints the totalPoints to set
+	 */
+	public void setTotalPoints(double totalPoints) {
+		this.totalPoints = totalPoints;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "User [userName=" + userName + ", password=" + password + ", birthDate=" + birthDate + ", name=" + name
-				+ ", title=" + title + ", mail=" + mail + ", phone=" + phone + ", address=" + address
-				+ ", profileImage=" + profileImage + "]";
+		return "Users [userName=" + userName + ", password=" + password + ", birthDate=" + birthDate + ", totalPoints="
+				+ totalPoints + ", name=" + name + ", title=" + title + ", mail=" + mail + ", phone=" + phone
+				+ ", address=" + address + ", profileImage=" + profileImage + ", userType=" + userType + ", extras="
+				+ extras + ", location=" + location + ", submitedInvoice=" + submitedInvoice + ", philipsInvoice="
+				+ philipsInvoice + ", pointsHistory=" + pointsHistory + "]";
 	}
 
 }

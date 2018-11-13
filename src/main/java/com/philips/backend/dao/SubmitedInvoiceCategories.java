@@ -20,7 +20,7 @@ public class SubmitedInvoiceCategories {
 	private double netSale;
 	private String extras;
 
-	private PhilipsInvoice philipsInvoice;
+	private SubmitedInvoice submitedInvoice;
 	private Category category;
 
 	/**
@@ -70,16 +70,16 @@ public class SubmitedInvoiceCategories {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "sales_id")
-	public PhilipsInvoice getPhilipsInvoice() {
-		return philipsInvoice;
+	public SubmitedInvoice getSubmitedInvoice() {
+		return submitedInvoice;
 	}
 
 	/**
 	 * @param philipsInvoice
 	 *            the philipsInvoice to set
 	 */
-	public void setPhilipsInvoice(PhilipsInvoice philipsInvoice) {
-		this.philipsInvoice = philipsInvoice;
+	public void setSubmitedInvoice(SubmitedInvoice submitedInvoice) {
+		this.submitedInvoice = submitedInvoice;
 	}
 
 	/**

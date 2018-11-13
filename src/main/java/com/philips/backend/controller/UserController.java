@@ -114,7 +114,7 @@ public class UserController {
 			String tempPassword = mailManagement.generatePassword();
 			// send mail with generated password.
 			try {
-				mailSent = mailManagement.sendmail(tempPassword, userMail);
+				mailSent = mailManagement.sendmail("",tempPassword, userMail);
 			} catch (AddressException e) {
 				LOGGER.warning("AddressException " + e.toString());
 				response.setMessage("ERROR in mail address");

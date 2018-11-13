@@ -18,10 +18,13 @@ import javax.persistence.OneToMany;
 public class Category {
 	private Integer id;
 	private String categoryName;
+	private String arCategoryName;
 	private String extras;
 	
 	Set<PhilipsInvoiceCategories> philipsInvoiceCategories; 
 	Set<SubmitedInvoiceCategories> submitedInvoiceCategories; 
+	
+	Set<SubCategory> subCategories; 
 
 	public Category() {
 		super();
@@ -30,17 +33,18 @@ public class Category {
 	/**
 	 * @param categoryName
 	 */
-	public Category(String categoryName) {
+	public Category(String categoryName, String arCategoryName) {
 		super();
 		this.categoryName = categoryName;
+		this.arCategoryName = arCategoryName; 
 	}
 
 	/**
 	 * @param categoryName
 	 * @param extras
 	 */
-	public Category(String categoryName, String extras) {
-		this(categoryName);
+	public Category(String categoryName, String extras, String arCategoryName) {
+		this(categoryName, arCategoryName);
 		this.extras = extras;
 	}
 
@@ -49,8 +53,8 @@ public class Category {
 	 * @param categoryName
 	 * @param extras
 	 */
-	public Category(Integer id, String categoryName, String extras) {
-		this(categoryName, extras);
+	public Category(Integer id, String categoryName, String extras, String arCategoryName) {
+		this(categoryName, extras, arCategoryName);
 		this.id = id;
 	}
 
@@ -131,15 +135,45 @@ public class Category {
 	public void setSubmitedInvoiceCategories(Set<SubmitedInvoiceCategories> submitedInvoiceCategories) {
 		this.submitedInvoiceCategories = submitedInvoiceCategories;
 	}
+	
+
+	/**
+	 * @return the subCategories
+	 */
+	@OneToMany(mappedBy = "category")
+	public Set<SubCategory> getSubCategories() {
+		return subCategories;
+	}
+
+	/**
+	 * @param subCategories the subCategories to set
+	 */
+	public void setSubCategories(Set<SubCategory> subCategories) {
+		this.subCategories = subCategories;
+	}
+
+	/**
+	 * @return the arCategoryName
+	 */
+	public String getArCategoryName() {
+		return arCategoryName;
+	}
+
+	/**
+	 * @param arCategoryName the arCategoryName to set
+	 */
+	public void setArCategoryName(String arCategoryName) {
+		this.arCategoryName = arCategoryName;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", categoryName=" + categoryName + ", extras=" + extras
-				+ ", philipsInvoiceCategories=" + philipsInvoiceCategories + ", submitedInvoiceCategories="
-				+ submitedInvoiceCategories + "]";
+		return "Category [id=" + id + ", categoryName=" + categoryName + ", arCategoryName=" + arCategoryName
+				+ ", extras=" + extras + ", philipsInvoiceCategories=" + philipsInvoiceCategories
+				+ ", submitedInvoiceCategories=" + submitedInvoiceCategories + "]";
 	}
 
 }

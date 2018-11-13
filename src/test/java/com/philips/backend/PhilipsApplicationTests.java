@@ -88,7 +88,7 @@ public class PhilipsApplicationTests {
 	}
 
 	private void testAddSubmitedInvoice() {
-		SubmitedInvoice submitedInvoice = new SubmitedInvoice(new Date(), "extras", "Invoice_"+categoryID,"SCHEDULED");  
+		SubmitedInvoice submitedInvoice = new SubmitedInvoice(new Date(), "extras", "Invoice_"+categoryID,"SCHEDULED",0);  
 		LOGGER.info("\nAdd SubmitedInvoice Request to : " + createURLWithPort("/submitedInvoices"));
 		LOGGER.info("\nAdd SubmitedInvoice Request : \n" + jsonConverter.objectToJson(submitedInvoice));
 

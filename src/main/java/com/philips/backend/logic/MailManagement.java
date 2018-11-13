@@ -24,7 +24,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class MailManagement {
 
-	   public boolean sendmail(String tempPassword, String mailTo) throws AddressException, MessagingException, IOException {
+	   public boolean sendmail(String messge, String subject, String mailTo) throws AddressException, MessagingException, IOException {
 		   
 		   // Mail configurations should be reviewed and updated. 
 		   Properties props = new Properties();
@@ -36,18 +36,18 @@ public class MailManagement {
 		   
 		   Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 		      protected PasswordAuthentication getPasswordAuthentication() {
-		         return new PasswordAuthentication("maysara.mohamed@bbi-consultancy.com", "B!tenxT88");
+		         return new PasswordAuthentication("maysara.mohamed@bbi-consultancy.com", "bBi123$%^");
 		      }
 		   });
 		   Message msg = new MimeMessage(session);
 		   msg.setFrom(new InternetAddress("maysara.mohamed@bbi-consultancy.com", false));
 
 		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mailTo));
-		   msg.setSubject("Philips Rest Password");
+		   msg.setSubject(subject);
 		   msg.setSentDate(new Date());
 
 		   MimeBodyPart messageBodyPart = new MimeBodyPart();
-		   String contentMessage = "Please use the below as temp password for your philips account <br><br>"+tempPassword+"<br><br>"; 
+		   String contentMessage = "<br><br>"+messge+"<br><br>"; 
 		   messageBodyPart.setContent(contentMessage, "text/html");
 
 		   Multipart multipart = new MimeMultipart();

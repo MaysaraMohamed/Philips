@@ -8,5 +8,35 @@
     "name": "com.philips.backend.excel.invoices.path",
     "type": "java.lang.String",
     "description": "A description for 'com.philips.backend.excel.invoices.path'"
+  },
+  {
+    "name": "com.philips.backend.categories.sub.path",
+    "type": "java.lang.String",
+    "description": "A description for 'com.philips.backend.categories.sub.path'"
+  },
+  {
+    "name": "daemon.tick",
+    "type": "java.lang.String",
+    "description": "A description for 'daemon.tick'"
+  },
+  {
+    "name": "daemon.job.status.scheduled",
+    "type": "java.lang.String",
+    "description": "A description for 'daemon.job.status.scheduled'"
+  },
+  {
+    "name": "daemon.job.status.matched",
+    "type": "java.lang.String",
+    "description": "A description for 'daemon.job.status.matched'"
+  },
+  {
+    "name": "daemon.job.status.not.matched",
+    "type": "java.lang.String",
+    "description": "A description for 'daemon.job.status.not.matched'"
+  },
+  {
+    "name": "daemon.match.after",
+    "type": "java.lang.String",
+    "description": "A description for 'daemon.match.after'"
   }
 ]}
