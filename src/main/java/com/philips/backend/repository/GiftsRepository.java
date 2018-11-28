@@ -15,4 +15,5 @@ import com.philips.backend.dao.Gifts;
 @RepositoryRestResource(collectionResourceRel = "gifts", path = "gifts")
 public interface GiftsRepository extends PagingAndSortingRepository<Gifts, Integer> {
 	public List<Gifts> findByUserTypeAndPointsLessThanEqual(String userType, double points); 
+	public List<Gifts> findByUserTypeOrderByPointsAsc(String userType); 
 }

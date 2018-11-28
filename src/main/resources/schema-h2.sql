@@ -114,3 +114,10 @@ create table gifts
    user_type varchar(20), 
    extras TEXT,
 );
+
+create table points_mapping
+(
+   id integer PRIMARY KEY AUTO_INCREMENT,
+   net_sale integer,
+   points integer
+);

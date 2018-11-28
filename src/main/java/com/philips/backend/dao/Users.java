@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.philips.backend.encryption.Encryption;
@@ -39,7 +40,10 @@ public class Users implements Serializable {
 	private String profileImage;
 	private String userType;
 	private String extras;
-
+	
+	
+	private double totalRedeemedPoints; 
+	private double totalPointsTileDate; 
 	// private Integer id;
 
 	private Set<Location> location;
@@ -336,6 +340,37 @@ public class Users implements Serializable {
 	 */
 	public void setTotalPoints(double totalPoints) {
 		this.totalPoints = totalPoints;
+	}
+
+	
+	/**
+	 * @return the totalRedeemedPoints
+	 */
+	@Transient
+	public double getTotalRedeemedPoints() {
+		return totalRedeemedPoints;
+	}
+
+	/**
+	 * @param totalRedeemedPoints the totalRedeemedPoints to set
+	 */
+	public void setTotalRedeemedPoints(double totalRedeemedPoints) {
+		this.totalRedeemedPoints = totalRedeemedPoints;
+	}
+
+	/**
+	 * @return the totalPointsTileDate
+	 */
+	@Transient
+	public double getTotalPointsTileDate() {
+		return totalPointsTileDate;
+	}
+
+	/**
+	 * @param totalPointsTileDate the totalPointsTileDate to set
+	 */
+	public void setTotalPointsTileDate(double totalPointsTileDate) {
+		this.totalPointsTileDate = totalPointsTileDate;
 	}
 
 	/* (non-Javadoc)

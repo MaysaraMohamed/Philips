@@ -1,6 +1,7 @@
 package com.philips.backend.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -8,15 +9,19 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.philips.backend.common.PointsRecord;
+import com.philips.backend.dao.PointsHistory;
 import com.philips.backend.dao.Response;
 import com.philips.backend.dao.Users;
 import com.philips.backend.encryption.Encryption;
 import com.philips.backend.logic.MailManagement;
+import com.philips.backend.repository.PointsHistoryRepository;
 import com.philips.backend.repository.UserRepository;
 
 @RestController
@@ -27,6 +32,9 @@ public class UserController {
 
 	@Autowired
 	private MailManagement mailManagement;
+
+	@Autowired
+	private PointsHistoryRepository pointsHistoryRepository;
 
 	private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
 
@@ -114,7 +122,7 @@ public class UserController {
 			String tempPassword = mailManagement.generatePassword();
 			// send mail with generated password.
 			try {
-				mailSent = mailManagement.sendmail("",tempPassword, userMail);
+				mailSent = mailManagement.sendmail("", tempPassword, userMail);
 			} catch (AddressException e) {
 				LOGGER.warning("AddressException " + e.toString());
 				response.setMessage("ERROR in mail address");
@@ -149,6 +157,44 @@ public class UserController {
 			}
 		}
 		return response;
+	}
+
+	@RequestMapping("/userProfile/{userId}")
+	public Object getUserProfileData(@PathVariable String userId) {
+		try {
+			Users user = userRepository.findByUserName(userId).get(0);
+			double totalNetPoints = pointsHistoryRepository.getTotalUserNetPoints(user);
+			double totalRedeemedPoints = pointsHistoryRepository.getTotalRedeemedPoints(user);
+			double totalPointsTileDate = pointsHistoryRepository.getTotalUserPoints(user);
+			user.setTotalPoints(totalNetPoints);
+			user.setTotalRedeemedPoints(totalRedeemedPoints);
+			user.setTotalPointsTileDate(totalPointsTileDate);
+			return user;
+		} catch (Exception e) {
+			LOGGER.warning(e.toString());
+		}
+		return null;
+	}
+	
+	
+	@RequestMapping("/pointsHistory/{userId}")
+	public Object getUserPointsHistory(@PathVariable String userId) {
+		try {
+			Users user = userRepository.findByUserName(userId).get(0);
+			List<PointsRecord> points = new ArrayList<>(); 
+			for (PointsHistory point : pointsHistoryRepository.findByUser(user)) {
+				PointsRecord record = new PointsRecord(); 
+				record.setPoints(point.getPoints());
+				record.setPointsDate(point.getPointsDate());
+				record.setUsedPoints(point.getUsedPoints());
+				record.setUserName(point.getUser().getUserName());
+				points.add(record); 
+			}  
+			return points; 
+		} catch (Exception e) {
+			LOGGER.warning(e.toString());
+		}
+		return null;
 	}
 
 }

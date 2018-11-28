@@ -1,5 +1,6 @@
 package com.philips.backend.common;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,7 +22,7 @@ public class Utilities {
 	}
 	
 	public static Date stringToDate(String stringDate) {
-	    SimpleDateFormat formatter=new SimpleDateFormat("dd-MM-yyyy");  
+	    SimpleDateFormat formatter=new SimpleDateFormat("MM/dd/yyyy");  
 	    Date date = null;
 		try {
 			date = formatter.parse(stringDate);
@@ -50,5 +51,14 @@ public class Utilities {
     	if(list1.size() != list2.size())
     		return false; 
     	return true; 
+    }
+    
+    public static String dateToString(Date date)
+    {
+    	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");  
+    	String strDate = dateFormat.format(date);  
+    	return strDate; 
+     
+    	
     }
 }

@@ -1,5 +1,6 @@
 package com.philips.backend.controller;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.philips.backend.common.GiftsResponse;
+import com.philips.backend.dao.Gifts;
 import com.philips.backend.dao.PointsHistory;
 import com.philips.backend.dao.Response;
 import com.philips.backend.dao.Users;
@@ -37,7 +39,7 @@ public class GiftsController {
 		try {
 			Users user = userRepository.findByUserName(userName).get(0);
 			giftsResponse = new GiftsResponse();
-			totalPoints = pointsHistoryRepository.getTotalUserPoints(user);
+			totalPoints = pointsHistoryRepository.getTotalUserNetPoints(user);
 			giftsResponse.setTotalPoints(totalPoints);
 			giftsResponse
 					.setGifts(giftsRepository.findByUserTypeAndPointsLessThanEqual(user.getUserType(), totalPoints));
@@ -47,13 +49,27 @@ public class GiftsController {
 		return giftsResponse;
 	}
 
-	// I used user her to update points instead of creating new object to just send data in request. 
+	@RequestMapping("/allGifts/{userType}")
+	public GiftsResponse getGiftsByUserType(@PathVariable String userType) {
+		GiftsResponse giftsResponse = new GiftsResponse();
+		try {
+			List<Gifts> gifts = giftsRepository.findByUserTypeOrderByPointsAsc(userType);
+			giftsResponse.setGifts(gifts);
+
+		} catch (Exception e) {
+			return null;
+		}
+		return giftsResponse;
+	}
+
+	// I used user her to update points instead of creating new object to just send
+	// data in request.
 	@RequestMapping(method = RequestMethod.POST, value = "/updatePoints")
 	public Response updatePoints(@RequestBody Users userRequest) {
-		LOGGER.info("Request is : "+userRequest.toString());
+		LOGGER.info("Request is : " + userRequest.toString());
 		Response response = new Response();
 		try {
-			double usedPoints = userRequest.getTotalPoints(); 
+			double usedPoints = userRequest.getTotalPoints();
 			Users user = userRepository.findByUserName(userRequest.getUserName()).get(0);
 			user.setTotalPoints(user.getTotalPoints() - usedPoints);
 			PointsHistory pointsRecord = pointsHistoryRepository.getLastPointsRecord(user).get(0);

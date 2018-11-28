@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.philips.backend.dao.Response;
 import com.philips.backend.logic.FileManagement;
 
 @RestController
@@ -40,13 +39,12 @@ public class FileController {
 
 	@RequestMapping("/loadPhilipsInvoice")
 	public Object loadPhilipsInvoices() throws SQLException {
-		Response response = new Response();
-		// TODO Call method to data from invoices list and insert into DB.
-		// TODO assign result to flag then check to return response.
+		// Call method to data from invoices list and insert into DB.
+		// assign result to flag then check to return response.
 		try {
 			String filePath = fileManagement.readFilesFromDirectory("xlsx", excelInvoicePath);
 			fileManagement.loadInvoicesFromExcel(filePath);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.warning(e.toString());
 			return "Something wong please try again later";
 		}

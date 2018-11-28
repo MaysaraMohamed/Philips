@@ -16,4 +16,5 @@ import com.philips.backend.dao.Category;
 @RepositoryRestResource(collectionResourceRel = "categories", path = "categories")
 public interface CategoryRepository extends PagingAndSortingRepository<Category, Integer> {
 	public Category findByCategoryName(String categoryName); 
+	public Category findByArCategoryName(String arCategoryName); 
 }

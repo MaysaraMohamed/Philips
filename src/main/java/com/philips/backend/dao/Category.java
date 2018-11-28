@@ -17,9 +17,9 @@ import javax.persistence.OneToMany;
 @Entity
 public class Category {
 	private Integer id;
-	private String categoryName;
-	private String arCategoryName;
-	private String extras;
+	private String categoryName ;
+	private String arCategoryName ;
+	private String extras ;
 	
 	Set<PhilipsInvoiceCategories> philipsInvoiceCategories; 
 	Set<SubmitedInvoiceCategories> submitedInvoiceCategories; 

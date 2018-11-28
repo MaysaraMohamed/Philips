@@ -68,38 +68,6 @@ public class InvoiceController {
 		}
 	}
 
-	// @RequestMapping(method = RequestMethod.POST, value = "/matchInvoices")
-	// public Response matchInvoice(@RequestBody Invoice submitedInvoice) {
-	// Response response = new Response();
-	// Invoice invoice = getPhilipsInvoice(submitedInvoice.getSalesId());
-	// if (invoice.getSalesId() == null) {
-	// response.setMessage("NOT FOUND");
-	// response.setStatus(404);
-	// LOGGER.info("Invoice is not found");
-	// } else if
-	// (!Utilities.ignoreTime(submitedInvoice.getInvoiceDate()).equals(invoice.getInvoiceDate()))
-	// {
-	// response.setMessage("DATE NOT MATCHED");
-	// response.setStatus(411);
-	// LOGGER.info("Invoice date not matched");
-	// } else if (!submitedInvoice.getUserName().equals(invoice.getUserName())) {
-	// response.setMessage("USERNAME NOT MATCHED");
-	// response.setStatus(410);
-	// LOGGER.info("Invoice UserName not matched");
-	// } else if (!Utilities.compareStringLists(submitedInvoice.getCategories(),
-	// invoice.getCategories())) {
-	// response.setMessage("CATEGORIES OR NET SALE ARE NOT MATCHED");
-	// response.setStatus(412);
-	// LOGGER.info("Invoice Categories or Net Sale are not matched");
-	// } else {
-	// response.setMessage("SUCCESS");
-	// response.setStatus(200);
-	// LOGGER.info("Invoice matched");
-	// }
-	// return response;
-	// }
-
-	// @RequestMapping("/matchInvoices/{invoiceId}")
 	public Response matchInvoice(String invoiceId) {
 		Response response = new Response();
 		Invoice submitedInvoice = getSubmitedInvoice(invoiceId);
@@ -131,6 +99,16 @@ public class InvoiceController {
 	@RequestMapping(method = RequestMethod.POST, value = "/submitInvoice")
 	public Response submitInvoice(@RequestBody Invoice invoice) {
 		Response response = new Response();
+		// To prevent user from submitting invoice that is already matched and he gain its points. 
+		if(submitedInvoiceRepository.findById(invoice.getSalesId()).isPresent())
+		{
+			if (submitedInvoiceRepository.findById(invoice.getSalesId()).get().getStatus().equals("200") )
+			{
+				response.setStatus(403);
+				response.setMessage("Invoice already compensated");
+				return response; 
+			}
+		}
 		SubmitedInvoice submitedInvoice = new SubmitedInvoice();
 		submitedInvoice.setSalesId(invoice.getSalesId());
 		submitedInvoice.setUser(userRepository.findByUserName(invoice.getUserName()).get(0));
@@ -146,7 +124,11 @@ public class InvoiceController {
 			String categoryName = category.split(",")[0];
 			double netSale = Double.parseDouble(category.split(",")[1]);
 			SubmitedInvoiceCategories submitedInvoiceCategories = new SubmitedInvoiceCategories();
-			submitedInvoiceCategories.setCategory(categoryRepository.findByCategoryName(categoryName));
+			if(categoryRepository.findByCategoryName(categoryName) != null) {
+				submitedInvoiceCategories.setCategory(categoryRepository.findByCategoryName(categoryName));
+			}else {
+				submitedInvoiceCategories.setCategory(categoryRepository.findByArCategoryName(categoryName));
+			}
 			submitedInvoiceCategories.setNetSale(netSale);
 			submitedInvoiceCategories.setSubmitedInvoice(submitedInvoice);
 			submitedInvoiceCategoriesRepository.save(submitedInvoiceCategories);
@@ -173,8 +155,13 @@ public class InvoiceController {
 			invoice.setInvoiceDate(philipsInvoice.getInvoiceDate());
 			invoice.setExtras(philipsInvoice.getExtras());
 			List<String> categoryList = new ArrayList<>();
+			// Update to match Arabic or English invoices
 			for (PhilipsInvoiceCategories category : categories) {
-				categoryList.add(category.getCategory().getCategoryName() + "," + category.getNetSale());
+				if(category.getCategory().getCategoryName() != null) {
+					categoryList.add(category.getCategory().getCategoryName() + "," + category.getNetSale());
+				}else if(category.getCategory().getArCategoryName() != null) {
+					categoryList.add(category.getCategory().getArCategoryName() + "," + category.getNetSale());
+				}
 			}
 			invoice.setCategories(categoryList);
 			return invoice;
@@ -199,8 +186,13 @@ public class InvoiceController {
 			invoice.setInvoiceDate(submitedInvoice.getInvoiceDate());
 			invoice.setExtras(submitedInvoice.getExtras());
 			List<String> categoryList = new ArrayList<>();
+			// Update to match Arabic or English invoices 
 			for (SubmitedInvoiceCategories category : categories) {
-				categoryList.add(category.getCategory().getCategoryName() + "," + category.getNetSale());
+				if(category.getCategory().getCategoryName() != null) {
+					categoryList.add(category.getCategory().getCategoryName() + "," + category.getNetSale());
+				}else if(category.getCategory().getArCategoryName() != null) {
+					categoryList.add(category.getCategory().getArCategoryName() + "," + category.getNetSale());
+				}
 			}
 			invoice.setCategories(categoryList);
 			return invoice;

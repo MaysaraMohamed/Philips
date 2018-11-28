@@ -17,7 +17,7 @@ import com.philips.backend.dao.Users;
  */
 @RepositoryRestResource(collectionResourceRel = "pointsHistory", path = "pointsHistory")
 public interface PointsHistoryRepository extends PagingAndSortingRepository<PointsHistory, Integer> {
-	public PointsHistory findByUser(Users user);
+	public List<PointsHistory> findByUser(Users user);
 
 	@Query(" select p from PointsHistory p where p.user = :user and p.pointsDate = CURRENT_DATE")
 	public PointsHistory getPointsRecordToday(@Param("user") Users user);
@@ -26,5 +26,12 @@ public interface PointsHistoryRepository extends PagingAndSortingRepository<Poin
 	public List<PointsHistory> getLastPointsRecord(@Param("user") Users user);
 
 	@Query(" select sum(points)-sum(usedPoints) from PointsHistory p where p.user = :user")
+	public Double getTotalUserNetPoints(@Param("user") Users user);
+	
+	@Query(" select sum(usedPoints) from PointsHistory p where p.user = :user")
+	public Double getTotalRedeemedPoints(@Param("user") Users user);
+	
+	@Query(" select sum(points) from PointsHistory p where p.user = :user")
 	public Double getTotalUserPoints(@Param("user") Users user);
+	
 }

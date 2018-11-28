@@ -5,10 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -136,11 +139,12 @@ public class FileManagement {
 	}
 
 	public void loadInvoicesFromExcel(String filePath) {
+		// new to load list of invoices from one file.
+		ArrayList<String> invoicesStringList = new ArrayList<>();
 		FileInputStream fis = null;
 		List<String> invoiceRecored;
 		PhilipsInvoice philipsInvoice = null;
 		PhilipsInvoiceCategories philipsInvoiceCategories;
-		boolean cleanOnce = true; 
 
 		try {
 			fis = new FileInputStream(filePath);
@@ -169,41 +173,64 @@ public class FileManagement {
 				Cell cell = cellIterator.next();
 				switch (cell.getCellType()) {
 				case Cell.CELL_TYPE_STRING:
-					invoiceRecored.add(cell.getStringCellValue());
+					if (!cell.getStringCellValue().equals("")) {
+						invoiceRecored.add(cell.getStringCellValue());
+					}
 					break;
 				case Cell.CELL_TYPE_NUMERIC:
-					invoiceRecored.add(cell.getNumericCellValue() + "");
+					// invoiceRecored.add(cell.getNumericCellValue() + "");
+					if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						if (HSSFDateUtil.isCellDateFormatted(cell)) {
+							System.out.println("Cell as date : " + Utilities.dateToString(cell.getDateCellValue()));
+							invoiceRecored.add(Utilities.dateToString(cell.getDateCellValue()));
+						} else {
+							invoiceRecored.add(cell.getNumericCellValue() + "");
+						}
+					}
 				default:
 				}
 			}
+
 			// To skip all unused records and skip the header
 			// Example to understand order [Category, Sales ID, Invoice Date, Customer Code,
 			// Customer Name, NET SALE]
 			if (invoiceRecored.size() >= 6 && !invoiceRecored.get(0).equals("Category")) {
+				// new to load all invoices from one list and skip negative values
+				if (Double.parseDouble(invoiceRecored.get(5)) > 0) {
+					invoicesStringList.add(invoiceRecored.get(1) + "," + invoiceRecored.get(0) + ","
+							+ invoiceRecored.get(2) + "," + invoiceRecored.get(3) + "," + invoiceRecored.get(4) + ","
+							+ invoiceRecored.get(5));
+				}
+			}
+		}
+
+		// use latest invoice list to load save invoices instead of previous code.
+		Collections.sort(invoicesStringList);
+		for (String record : invoicesStringList) {
+			String userName = record.split(",")[3].replace(" ", "");
+			if (!userRepository.findByUserName(userName).isEmpty()) {
+				philipsInvoiceCategories = new PhilipsInvoiceCategories();
 				// Insert invoice only if not exist.
 				philipsInvoice = new PhilipsInvoice();
-				String salesId = invoiceRecored.get(1); 
+				String salesId = record.split(",")[0];
 				philipsInvoice.setSalesId(salesId);
-				// to delete old invoice if exist and insert again. 
-//				if (philipsInvoiceRepository.findById(salesId).isPresent() && cleanOnce) {
-//					philipsInvoiceCategoriesRepository.deleteByPhilipsInvoice(philipsInvoice);
-//					cleanOnce = false; 
-//				}
-					System.out.print(invoiceRecored.toString() + "\n");
-					philipsInvoiceCategories.setNetSale(Double.parseDouble(invoiceRecored.get(5)));
-					// prepare Philips invoice relation
-					philipsInvoice.setInvoiceDate(Utilities.stringToDate(invoiceRecored.get(2)));
-					Users user = new Users();
-					user.setUserName(invoiceRecored.get(3).replace(" ", ""));
-					philipsInvoice.setUser(user);
-					// here invoice will be saved more than once but because it always has the same
-					// same ID it is not an issue right now.
-					philipsInvoiceRepository.save(philipsInvoice);
-					philipsInvoiceCategories.setPhilipsInvoice(philipsInvoice);
-					String categoryName = invoiceRecored.get(0);
-					Category category = categoryRepository.findByCategoryName(categoryName);
-					philipsInvoiceCategories.setCategory(category);
-					philipsInvoiceCategoriesRepository.save(philipsInvoiceCategories);
+				System.out.print(record.toString() + "\n");
+				philipsInvoiceCategories.setNetSale(Double.parseDouble(record.split(",")[5]));
+
+				philipsInvoice.setInvoiceDate(Utilities.stringToDate(record.split(",")[2]));
+				Users user = new Users();
+				user.setUserName(userName);
+				philipsInvoice.setUser(user);
+				// here invoice will be saved more than once but because it always has the same
+				// same ID it is not an issue right now.
+				philipsInvoiceRepository.save(philipsInvoice);
+				philipsInvoiceCategories.setPhilipsInvoice(philipsInvoice);
+				String categoryName = record.split(",")[1];
+				Category category = categoryRepository.findByCategoryName(categoryName);
+				philipsInvoiceCategories.setCategory(category);
+				philipsInvoiceCategoriesRepository.save(philipsInvoiceCategories);
+			} else {
+				LOGGER.info("User Name :" + userName + ": is not exist and invoices skipped for that user");
 			}
 		}
 	}
