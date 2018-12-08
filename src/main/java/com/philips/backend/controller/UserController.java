@@ -18,11 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.philips.backend.common.PointsRecord;
 import com.philips.backend.dao.PointsHistory;
 import com.philips.backend.dao.Response;
+import com.philips.backend.dao.SubmitedInvoice;
+import com.philips.backend.dao.SubmitedInvoiceCategories;
 import com.philips.backend.dao.Users;
 import com.philips.backend.encryption.Encryption;
 import com.philips.backend.logic.MailManagement;
 import com.philips.backend.repository.PointsHistoryRepository;
+import com.philips.backend.repository.SubmitedInvoiceCategoriesRepository;
+import com.philips.backend.repository.SubmitedInvoiceRepository;
 import com.philips.backend.repository.UserRepository;
+import com.philips.backend.scheduler.DaemonController;
 
 @RestController
 public class UserController {
@@ -35,6 +40,15 @@ public class UserController {
 
 	@Autowired
 	private PointsHistoryRepository pointsHistoryRepository;
+
+	@Autowired
+	private SubmitedInvoiceCategoriesRepository submitedInvoiceCategoriesRepository;
+
+	@Autowired
+	private SubmitedInvoiceRepository submitedInvoiceRepository;
+
+	@Autowired
+	private DaemonController daemonController;
 
 	private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
 
@@ -95,6 +109,30 @@ public class UserController {
 			return userRepository.save(DBUser);
 		} else {
 			return null;
+		}
+	}
+
+	// put user based on sent data on user object in request.
+	@RequestMapping(method = RequestMethod.PUT, value = "/changePassword")
+	public Response changePassword(@RequestBody Users user) {
+		Response response = new Response();
+		if (checkLogin(user) != null) {
+			Users newUser = new Users();
+			newUser.setPassword(user.getNewPassword());
+			newUser.setUserName(user.getUserName());
+			if (updateUser(newUser) != null) {
+				response.setStatus(200);
+				response.setMessage("Password updated successfully");
+				return response;
+			} else {
+				response.setMessage("ERROR in updating password");
+				response.setStatus(401);
+				return response;
+			}
+		} else {
+			response.setMessage("Old password not correct");
+			response.setStatus(400);
+			return response;
 		}
 	}
 
@@ -169,32 +207,47 @@ public class UserController {
 			user.setTotalPoints(totalNetPoints);
 			user.setTotalRedeemedPoints(totalRedeemedPoints);
 			user.setTotalPointsTileDate(totalPointsTileDate);
+			user.setTotalPendingPoints(calculatePendingPoints());
 			return user;
 		} catch (Exception e) {
 			LOGGER.warning(e.toString());
 		}
 		return null;
 	}
-	
-	
+
 	@RequestMapping("/pointsHistory/{userId}")
 	public Object getUserPointsHistory(@PathVariable String userId) {
 		try {
 			Users user = userRepository.findByUserName(userId).get(0);
-			List<PointsRecord> points = new ArrayList<>(); 
+			List<PointsRecord> points = new ArrayList<>();
 			for (PointsHistory point : pointsHistoryRepository.findByUser(user)) {
-				PointsRecord record = new PointsRecord(); 
+				PointsRecord record = new PointsRecord();
 				record.setPoints(point.getPoints());
 				record.setPointsDate(point.getPointsDate());
 				record.setUsedPoints(point.getUsedPoints());
 				record.setUserName(point.getUser().getUserName());
-				points.add(record); 
-			}  
-			return points; 
+				points.add(record);
+			}
+			return points;
 		} catch (Exception e) {
 			LOGGER.warning(e.toString());
 		}
 		return null;
+	}
+
+	public double calculatePendingPoints() {
+		double totalNetSale = 0;
+		// Get scheduled sales ID,
+		// Get totalNet sale for each sales ID
+		// get Total net sale for all sales ID.
+		for (SubmitedInvoice submitedInvoice : submitedInvoiceRepository.findByStatus("SCHEDULED")) {
+			for (SubmitedInvoiceCategories submitedInvoiceCategories : submitedInvoiceCategoriesRepository
+					.findBySubmitedInvoice(submitedInvoice)) {
+				totalNetSale += submitedInvoiceCategories.getNetSale();
+			}
+		}
+		// convert total sales ID to points.
+		return daemonController.getPointsForNetSale(totalNetSale);
 	}
 
 }

@@ -2,7 +2,10 @@ package com.philips.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.philips.backend.common.FileStorageProperties;
 
 /**
  * @author maysara.mohamed
@@ -12,6 +15,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableConfigurationProperties({
+        FileStorageProperties.class
+})
 public class PhilipsApplication {
 
 	public static void main(String[] args) {

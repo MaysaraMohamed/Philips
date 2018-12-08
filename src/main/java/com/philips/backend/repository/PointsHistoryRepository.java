@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.philips.backend.dao.PointsHistory;
+import com.philips.backend.dao.SubmitedInvoice;
 import com.philips.backend.dao.Users;
 
 /**
@@ -34,4 +35,6 @@ public interface PointsHistoryRepository extends PagingAndSortingRepository<Poin
 	@Query(" select sum(points) from PointsHistory p where p.user = :user")
 	public Double getTotalUserPoints(@Param("user") Users user);
 	
+	
+	public List<PointsHistory> findTop15ByUserOrderByPointsDateDesc(Users user);
 }

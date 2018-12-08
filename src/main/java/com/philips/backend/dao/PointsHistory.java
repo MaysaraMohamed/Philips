@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author maysara.mohamed
  * @version 1.0
@@ -115,6 +117,7 @@ public class PointsHistory {
 	/**
 	 * @return the user
 	 */
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_name")
 	public Users getUser() {

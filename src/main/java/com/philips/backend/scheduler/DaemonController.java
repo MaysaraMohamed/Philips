@@ -47,12 +47,12 @@ public class DaemonController {
 
 	@Autowired
 	private MailManagement mailManagement;
-	
+
 	@Autowired
-	private UserRepository userRepository; 
-	
+	private UserRepository userRepository;
+
 	@Autowired
-	private PointsMappingRepository pointsMappingRepository; 
+	private PointsMappingRepository pointsMappingRepository;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Daemon.class);
 
@@ -71,7 +71,9 @@ public class DaemonController {
 
 	/**
 	 * matchScheduledInvoices and send Notification with matching result.
-	 * @param list of scheduledInvoices to be matched. 
+	 * 
+	 * @param list
+	 *            of scheduledInvoices to be matched.
 	 */
 	public void matchScheduledInvoices(List<SubmitedInvoice> scheduledInvoices) {
 		Response response;
@@ -84,26 +86,28 @@ public class DaemonController {
 			sendMatchingResultNotification(response, submitedInvoice.getUser().getMail());
 		}
 	}
-	
+
 	/**
-	 * Calculate points for Submitted invoices and submit result to points history for each user. 
+	 * Calculate points for Submitted invoices and submit result to points history
+	 * for each user.
+	 * 
 	 * @param submitedInvoice
 	 * @return
 	 */
 	public SubmitedInvoice calculatePoints(SubmitedInvoice submitedInvoice) {
 		double invoicePoints = 0;
-		double totalNetsale = 0; 
-		Users user = submitedInvoice.getUser(); 
+		double totalNetsale = 0;
+		Users user = submitedInvoice.getUser();
 		PointsHistory pointsHistory = new PointsHistory();
 		if (submitedInvoice.getStatus().replaceAll(" ", "").equals("200")) {
 			List<SubmitedInvoiceCategories> submitedInvoiceCategories = submitedInvoiceCategoriesRepository
 					.findBySubmitedInvoice(submitedInvoice);
 			for (SubmitedInvoiceCategories submitedInvoiceCategory : submitedInvoiceCategories) {
-				totalNetsale += submitedInvoiceCategory.getNetSale(); 
+				totalNetsale += submitedInvoiceCategory.getNetSale();
 			}
-			// calculate total invoice points for user. 
-			invoicePoints = getPointsForNetSale(totalNetsale); 
-			// get points history for first time if not exist inerst ne one
+			// calculate total invoice points for user.
+			invoicePoints = getPointsForNetSale(totalNetsale);
+			// get points history for first time if not exist insert new one
 			// if exist get old one and compare date to current date if match accumulate to
 			// same record.
 
@@ -116,7 +120,7 @@ public class DaemonController {
 			pointsHistory.setUser(user);
 			pointsHistoryRepository.save(pointsHistory);
 			user.setTotalPoints(pointsHistoryRepository.getTotalUserPoints(user));
-			userRepository.save(user); 
+			userRepository.save(user);
 
 		}
 		return submitedInvoice;
@@ -125,11 +129,10 @@ public class DaemonController {
 	private void sendMatchingResultNotification(Response matchingInvoiceResponse, String mailTo) {
 		try {
 			if (matchingInvoiceResponse.getStatus() == 200) {
-				LOGGER.info("Sending mail with success submition to :" + mailTo+":"); 
-				mailManagement.sendmail("Your Invoice is submitted Successfully", "Submition Invoice result",
-						mailTo);
+				LOGGER.info("Sending mail with success submition to :" + mailTo + ":");
+				mailManagement.sendmail("Your Invoice is submitted Successfully", "Submition Invoice result", mailTo);
 			} else {
-				LOGGER.info("Sending mail with failed submition to :" + mailTo+":");
+				LOGGER.info("Sending mail with failed submition to :" + mailTo + ":");
 				mailManagement.sendmail("Your Invoice is not matched please try to submit again",
 						"Submition Invoice result", mailTo);
 			}
@@ -144,17 +147,21 @@ public class DaemonController {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	private double getPointsForNetSale(double totalNetSale)
-	{
-		double total=0;
-		for (PointsMapping pointMap : pointsMappingRepository.findAllByOrderByNetSaleDesc()) { 
-				   if(totalNetSale >= pointMap.getNetSale()) {
-					   total+=pointMap.getPoints();
-					   totalNetSale = totalNetSale - pointMap.getNetSale(); 
-				   }
+
+	public double getPointsForNetSale(double totalNetSale) {
+		double total = 0;
+		PointsMapping lastPointMap = null;
+		for (PointsMapping pointMap : pointsMappingRepository.findAllByOrderByNetSaleDesc()) {
+			if (totalNetSale >= pointMap.getNetSale()) {
+				total += pointMap.getPoints();
+				totalNetSale = totalNetSale - pointMap.getNetSale();
+			}
+			lastPointMap = pointMap;
 		}
-		return total;  
+		if (totalNetSale >= lastPointMap.getNetSale()) {
+			total += lastPointMap.getPoints();
+			totalNetSale = totalNetSale - lastPointMap.getNetSale();
+		}
+		return total;
 	}
 }

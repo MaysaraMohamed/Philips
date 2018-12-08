@@ -160,6 +160,7 @@ public class SubmitedInvoice {
 	/**
 	 * @return the submitedInvoiceCategories
 	 */
+	@JsonIgnore
 	@OneToMany(mappedBy = "submitedInvoice")
 	public Set<SubmitedInvoiceCategories> getSubmitedInvoiceCategories() {
 		return submitedInvoiceCategories;

@@ -49,6 +49,9 @@ public class InvoiceController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserController userController; 
 
 	@Autowired
 	private PointsHistoryRepository pointsHistoryRepository;
@@ -198,6 +201,17 @@ public class InvoiceController {
 			return invoice;
 		}
 		return invoice;
+	}
+	
+	@RequestMapping("/submitedInvoices/{userName}")
+	public Object getSubmitedInvoiceRequest(@PathVariable String userName) {
+		try {
+		Users user = userRepository.findByUserName(userName).get(0);
+		return submitedInvoiceRepository.findTop10ByUserOrderBySubmissionDateDesc(user);
+		}catch (Exception e) {
+			LOGGER.warning(e.toString());
+			return null; 
+		}
 	}
 
 }

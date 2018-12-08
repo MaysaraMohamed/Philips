@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.philips.backend.dao.SubmitedInvoice;
+import com.philips.backend.dao.Users;
 
 /**
  * @author maysara.mohamed
@@ -19,4 +20,5 @@ public interface SubmitedInvoiceRepository extends PagingAndSortingRepository<Su
 	@Query("from SubmitedInvoice s where s.status = :status")
 	public List<SubmitedInvoice> findByStatus(@Param("status") String status);
 	
+	public List<SubmitedInvoice> findTop10ByUserOrderBySubmissionDateDesc(Users user);
 }

@@ -29,6 +29,7 @@ public class Users implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String userName;
 	private String password;
+	private String newPassword;
 	private Date birthDate;
 	private double totalPoints; 
 
@@ -44,6 +45,7 @@ public class Users implements Serializable {
 	
 	private double totalRedeemedPoints; 
 	private double totalPointsTileDate; 
+	private double totalPendingPoints; 
 	// private Integer id;
 
 	private Set<Location> location;
@@ -371,6 +373,39 @@ public class Users implements Serializable {
 	 */
 	public void setTotalPointsTileDate(double totalPointsTileDate) {
 		this.totalPointsTileDate = totalPointsTileDate;
+	}
+
+	
+	/**
+	 * @return the totalPendingPoints
+	 */
+	@Transient
+	public double getTotalPendingPoints() {
+		return totalPendingPoints;
+	}
+
+	/**
+	 * @param totalPendingPoints the totalPendingPoints to set
+	 */
+	public void setTotalPendingPoints(double totalPendingPoints) {
+		this.totalPendingPoints = totalPendingPoints;
+	}
+
+	
+	
+	/**
+	 * @return the newPassword
+	 */
+	@Transient
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	/**
+	 * @param newPassword the newPassword to set
+	 */
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 
 	/* (non-Javadoc)
