@@ -20,5 +20,5 @@ public interface SubmitedInvoiceRepository extends PagingAndSortingRepository<Su
 	@Query("from SubmitedInvoice s where s.status = :status")
 	public List<SubmitedInvoice> findByStatus(@Param("status") String status);
 	
-	public List<SubmitedInvoice> findTop10ByUserOrderBySubmissionDateDesc(Users user);
+	public List<SubmitedInvoice> findTop20ByUserOrderBySubmissionDateDesc(Users user);
 }

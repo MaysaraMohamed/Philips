@@ -83,7 +83,7 @@ public class DaemonController {
 			submitedInvoice.setStatus(response.getStatus() + "");
 			submitedInvoice = calculatePoints(submitedInvoice);
 			submitedInvoiceRepository.save(submitedInvoice);
-			sendMatchingResultNotification(response, submitedInvoice.getUser().getMail());
+//			sendMatchingResultNotification(response, submitedInvoice.getUser().getMail());
 		}
 	}
 

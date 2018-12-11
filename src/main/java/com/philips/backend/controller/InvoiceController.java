@@ -28,6 +28,7 @@ import com.philips.backend.repository.PointsHistoryRepository;
 import com.philips.backend.repository.SubmitedInvoiceCategoriesRepository;
 import com.philips.backend.repository.SubmitedInvoiceRepository;
 import com.philips.backend.repository.UserRepository;
+import com.philips.backend.scheduler.DaemonController;
 
 @RestController
 public class InvoiceController {
@@ -52,6 +53,9 @@ public class InvoiceController {
 	
 	@Autowired
 	private UserController userController; 
+	
+	@Autowired
+	private DaemonController daemonController; 
 
 	@Autowired
 	private PointsHistoryRepository pointsHistoryRepository;
@@ -120,6 +124,8 @@ public class InvoiceController {
 		submitedInvoice.setSubmissionDate(new Date());
 		submitedInvoice.setStatus("SCHEDULED");
 		submitedInvoiceRepository.save(submitedInvoice);
+		
+		double totalNetSale=0; 
 		List<String> categories = invoice.getCategories();
 		if (submitedInvoiceCategoriesRepository.findBySubmitedInvoice(submitedInvoice).size() > 0)
 			submitedInvoiceCategoriesRepository.deleteBySubmitedInvoice(submitedInvoice);
@@ -132,10 +138,14 @@ public class InvoiceController {
 			}else {
 				submitedInvoiceCategories.setCategory(categoryRepository.findByArCategoryName(categoryName));
 			}
+			totalNetSale +=netSale; 
 			submitedInvoiceCategories.setNetSale(netSale);
 			submitedInvoiceCategories.setSubmitedInvoice(submitedInvoice);
 			submitedInvoiceCategoriesRepository.save(submitedInvoiceCategories);
 		}
+		// Update pending points. 
+		submitedInvoice.setInvoicePoints(daemonController.getPointsForNetSale(totalNetSale));
+		submitedInvoiceRepository.save(submitedInvoice);
 		response.setStatus(200);
 		response.setMessage("SUCCESS");
 		return response;
@@ -207,7 +217,7 @@ public class InvoiceController {
 	public Object getSubmitedInvoiceRequest(@PathVariable String userName) {
 		try {
 		Users user = userRepository.findByUserName(userName).get(0);
-		return submitedInvoiceRepository.findTop10ByUserOrderBySubmissionDateDesc(user);
+		return submitedInvoiceRepository.findTop20ByUserOrderBySubmissionDateDesc(user);
 		}catch (Exception e) {
 			LOGGER.warning(e.toString());
 			return null; 
