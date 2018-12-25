@@ -14,4 +14,5 @@ import com.philips.backend.dao.PointsMapping;
 @RepositoryRestResource(collectionResourceRel = "pointsMapping", path = "pointsMapping")
 public interface PointsMappingRepository extends PagingAndSortingRepository<PointsMapping, Integer> {
 	public List<PointsMapping> findAllByOrderByNetSaleDesc();
+	public PointsMapping findByCategoryId(int categoryId);
 }

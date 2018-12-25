@@ -96,17 +96,18 @@ public class DaemonController {
 	 */
 	public SubmitedInvoice calculatePoints(SubmitedInvoice submitedInvoice) {
 		double invoicePoints = 0;
-		double totalNetsale = 0;
+//		double totalNetsale = 0;
 		Users user = submitedInvoice.getUser();
 		PointsHistory pointsHistory = new PointsHistory();
 		if (submitedInvoice.getStatus().replaceAll(" ", "").equals("200")) {
 			List<SubmitedInvoiceCategories> submitedInvoiceCategories = submitedInvoiceCategoriesRepository
 					.findBySubmitedInvoice(submitedInvoice);
-			for (SubmitedInvoiceCategories submitedInvoiceCategory : submitedInvoiceCategories) {
-				totalNetsale += submitedInvoiceCategory.getNetSale();
-			}
+//			for (SubmitedInvoiceCategories submitedInvoiceCategory : submitedInvoiceCategories) {
+//				totalNetsale += submitedInvoiceCategory.getNetSale();
+//			}
 			// calculate total invoice points for user.
-			invoicePoints = getPointsForNetSale(totalNetsale);
+//			invoicePoints = getPointsForNetSale(totalNetsale);
+			invoicePoints = getPointsForsubmitedInvoiceCategories(submitedInvoiceCategories); 
 			// get points history for first time if not exist insert new one
 			// if exist get old one and compare date to current date if match accumulate to
 			// same record.
@@ -161,6 +162,19 @@ public class DaemonController {
 		if (totalNetSale >= lastPointMap.getNetSale()) {
 			total += lastPointMap.getPoints();
 			totalNetSale = totalNetSale - lastPointMap.getNetSale();
+		}
+		return total;
+	}
+	
+	// To calculate points from invoices items calculate points for each item and get total for invoice. 
+	public int getPointsForsubmitedInvoiceCategories(List<SubmitedInvoiceCategories> submitedInvoiceCategories) {
+		int total = 0;
+		for (SubmitedInvoiceCategories submitedInvoiceCategory : submitedInvoiceCategories) {
+			int categoryId = submitedInvoiceCategory.getCategory().getId();
+			// get mapping record by categoryID. 
+			int mappingNetSale = pointsMappingRepository.findByCategoryId(categoryId).getNetSale(); 
+			//  total += submitedInvoiceCategory.getNetSale() / netSale from mapping record. 
+			 total += submitedInvoiceCategory.getNetSale() / mappingNetSale; 
 		}
 		return total;
 	}

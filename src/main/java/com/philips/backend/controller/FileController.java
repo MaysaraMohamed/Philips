@@ -30,6 +30,7 @@ public class FileController {
 		try {
 			String filePath = fileManagement.readFilesFromDirectory("xlsx", excelUsersPath);
 			fileManagement.loadUsersFromExcel(filePath);
+			fileManagement.removeFileFromDirectory(fileManagement.readFilesFromDirectory("xlsx", excelUsersPath));
 		} catch (Exception e) {
 			LOGGER.warning(e.toString());
 			return "Something wong please try again later";
@@ -44,6 +45,7 @@ public class FileController {
 		try {
 			String filePath = fileManagement.readFilesFromDirectory("xlsx", excelInvoicePath);
 			fileManagement.loadInvoicesFromExcel(filePath);
+			fileManagement.removeFileFromDirectory(fileManagement.readFilesFromDirectory("xlsx", excelInvoicePath));
 		} catch (Exception e) {
 			LOGGER.warning(e.toString());
 			return "Something wong please try again later";

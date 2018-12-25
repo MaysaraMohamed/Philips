@@ -19,7 +19,6 @@ import com.philips.backend.common.PointsRecord;
 import com.philips.backend.dao.PointsHistory;
 import com.philips.backend.dao.Response;
 import com.philips.backend.dao.SubmitedInvoice;
-import com.philips.backend.dao.SubmitedInvoiceCategories;
 import com.philips.backend.dao.Users;
 import com.philips.backend.encryption.Encryption;
 import com.philips.backend.logic.MailManagement;
@@ -55,7 +54,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, value = "/login")
 	public Users checkLogin(@RequestBody Users user) {
 		// Response response = new Response();
-		List<Users> usersList = userRepository.findByUserName(user.getUserName());
+		List<Users> usersList = userRepository.findByUserNameIgnoreCase(user.getUserName());
 		if (usersList.size() == 0) {
 			LOGGER.info("User is : Unauthorized");
 			return null;
@@ -71,7 +70,7 @@ public class UserController {
 	// put user based on sent data on user object in request.
 	@RequestMapping(method = RequestMethod.PUT, value = "/user")
 	public Users updateUser(@RequestBody Users user) {
-		List<Users> usersList = userRepository.findByUserName(user.getUserName());
+		List<Users> usersList = userRepository.findByUserNameIgnoreCase(user.getUserName());
 		Users DBUser;
 
 		if (usersList.size() == 1) {
@@ -140,7 +139,7 @@ public class UserController {
 	public Response sendPassword(@RequestBody Users user) {
 		Response response = new Response();
 		// TODO get user by ID.
-		List<Users> usersList = userRepository.findByUserName(user.getUserName());
+		List<Users> usersList = userRepository.findByUserNameIgnoreCase(user.getUserName());
 		Users DBUser;
 		boolean mailSent = false;
 
@@ -199,11 +198,18 @@ public class UserController {
 
 	@RequestMapping("/userProfile/{userId}")
 	public Object getUserProfileData(@PathVariable String userId) {
+		double totalNetPoints = 0 ; 
+		double totalRedeemedPoints = 0 ; 
+		double totalPointsTileDate = 0; 
 		try {
-			Users user = userRepository.findByUserName(userId).get(0);
-			double totalNetPoints = pointsHistoryRepository.getTotalUserNetPoints(user);
-			double totalRedeemedPoints = pointsHistoryRepository.getTotalRedeemedPoints(user);
-			double totalPointsTileDate = pointsHistoryRepository.getTotalUserPoints(user);
+			Users user = userRepository.findByUserNameIgnoreCase(userId).get(0);
+			try {
+				totalNetPoints = pointsHistoryRepository.getTotalUserNetPoints(user);
+				totalRedeemedPoints = pointsHistoryRepository.getTotalRedeemedPoints(user);
+				totalPointsTileDate = pointsHistoryRepository.getTotalUserPoints(user);
+			}catch (Exception e) {
+				LOGGER.warning(e.toString());
+			}
 			user.setTotalPoints(totalNetPoints);
 			user.setTotalRedeemedPoints(totalRedeemedPoints);
 			user.setTotalPointsTileDate(totalPointsTileDate);
@@ -218,7 +224,7 @@ public class UserController {
 	@RequestMapping("/pointsHistory/{userId}")
 	public Object getUserPointsHistory(@PathVariable String userId) {
 		try {
-			Users user = userRepository.findByUserName(userId).get(0);
+			Users user = userRepository.findByUserNameIgnoreCase(userId).get(0);
 			List<PointsRecord> points = new ArrayList<>();
 			for (PointsHistory point : pointsHistoryRepository.findByUser(user)) {
 				PointsRecord record = new PointsRecord();
@@ -240,14 +246,23 @@ public class UserController {
 		// Get scheduled sales ID,
 		// Get totalNet sale for each sales ID
 		// get Total net sale for all sales ID.
+		// for (SubmitedInvoice submitedInvoice :
+		// submitedInvoiceRepository.findByStatus("SCHEDULED")) {
+		// for (SubmitedInvoiceCategories submitedInvoiceCategories :
+		// submitedInvoiceCategoriesRepository
+		// .findBySubmitedInvoice(submitedInvoice)) {
+		// totalNetSale += submitedInvoiceCategories.getNetSale();
+		// }
+		// }
+
 		for (SubmitedInvoice submitedInvoice : submitedInvoiceRepository.findByStatus("SCHEDULED")) {
-			for (SubmitedInvoiceCategories submitedInvoiceCategories : submitedInvoiceCategoriesRepository
-					.findBySubmitedInvoice(submitedInvoice)) {
-				totalNetSale += submitedInvoiceCategories.getNetSale();
-			}
+			return daemonController.getPointsForsubmitedInvoiceCategories(
+					submitedInvoiceCategoriesRepository.findBySubmitedInvoice(submitedInvoice));
 		}
+
 		// convert total sales ID to points.
-		return daemonController.getPointsForNetSale(totalNetSale);
+		// return daemonController.getPointsForNetSale(totalNetSale);
+		return totalNetSale;
 	}
 
 }

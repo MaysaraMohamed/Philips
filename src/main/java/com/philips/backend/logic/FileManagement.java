@@ -73,6 +73,16 @@ public class FileManagement {
 		}
 		return output;
 	}
+	
+	public boolean removeFileFromDirectory(String path)
+	{
+        File file = new File(path);
+        if(file.delete()){
+            return true; 
+        }else {
+        	return false;
+        }
+	}
 
 	/**
 	 * Function to to read content from Excel file to be used to in DB insertion
@@ -208,7 +218,7 @@ public class FileManagement {
 		Collections.sort(invoicesStringList);
 		for (String record : invoicesStringList) {
 			String userName = record.split(",")[3].replace(" ", "");
-			if (!userRepository.findByUserName(userName).isEmpty()) {
+			if (!userRepository.findByUserNameIgnoreCase(userName).isEmpty()) {
 				philipsInvoiceCategories = new PhilipsInvoiceCategories();
 				// Insert invoice only if not exist.
 				philipsInvoice = new PhilipsInvoice();

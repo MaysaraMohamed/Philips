@@ -45,6 +45,7 @@ create table submited_invoice
    submission_date DATE, 
    user_name varchar(50),
    invoice_points double, 
+   total_net_sale double, 
    extras TEXT, 
    FOREIGN KEY (user_name) REFERENCES users(user_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -118,6 +119,8 @@ create table gifts
 create table points_mapping
 (
    id integer PRIMARY KEY AUTO_INCREMENT,
+   category_id int, 
    net_sale integer,
-   points integer
+   points integer, 
+   FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

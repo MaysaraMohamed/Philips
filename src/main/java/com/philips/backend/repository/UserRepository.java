@@ -14,5 +14,5 @@ import com.philips.backend.dao.Users;
  */
 @RepositoryRestResource(collectionResourceRel = "users", path = "users")
 public interface UserRepository extends PagingAndSortingRepository<Users, String> {
-	public List<Users> findByUserName(String userName); 
+	public List<Users> findByUserNameIgnoreCase(String userName); 
 }

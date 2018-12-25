@@ -27,6 +27,7 @@ public class SubmitedInvoice {
 	private String status;
 	private String salesId;
 	private double invoicePoints; 
+	private double totalNetSale; 
 
 	private Set<SubmitedInvoiceCategories> submitedInvoiceCategories; // one2many
 	private Users user;
@@ -187,6 +188,21 @@ public class SubmitedInvoice {
 	 */
 	public void setInvoicePoints(double invoicePoints) {
 		this.invoicePoints = invoicePoints;
+	}
+
+	
+	/**
+	 * @return the totalNetSale
+	 */
+	public double getTotalNetSale() {
+		return totalNetSale;
+	}
+
+	/**
+	 * @param totalNetSale the totalNetSale to set
+	 */
+	public void setTotalNetSale(double totalNetSale) {
+		this.totalNetSale = totalNetSale;
 	}
 
 	/* (non-Javadoc)

@@ -25,6 +25,7 @@ public class Category {
 	Set<SubmitedInvoiceCategories> submitedInvoiceCategories; 
 	
 	Set<SubCategory> subCategories; 
+	Set<PointsMapping> pointsMapping; 
 
 	public Category() {
 		super();
@@ -150,6 +151,22 @@ public class Category {
 	 */
 	public void setSubCategories(Set<SubCategory> subCategories) {
 		this.subCategories = subCategories;
+	}
+
+	
+	/**
+	 * @return the pointsMapping
+	 */
+	@OneToMany(mappedBy = "category")
+	public Set<PointsMapping> getPointsMapping() {
+		return pointsMapping;
+	}
+
+	/**
+	 * @param pointsMapping the pointsMapping to set
+	 */
+	public void setPointsMapping(Set<PointsMapping> pointsMapping) {
+		this.pointsMapping = pointsMapping;
 	}
 
 	/**

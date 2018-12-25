@@ -24,7 +24,7 @@ public class PointsHistoryController {
 	@RequestMapping("/userPointsHistory/{userName}")
 	public Object getPointsHistoryRequest(@PathVariable String userName) {
 		try {
-			Users user = userRepository.findByUserName(userName).get(0);
+			Users user = userRepository.findByUserNameIgnoreCase(userName).get(0);
 			return pointsHistoryRepository.findTop15ByUserOrderByPointsDateDesc(user);
 		} catch (Exception e) {
 			LOGGER.warning(e.toString());

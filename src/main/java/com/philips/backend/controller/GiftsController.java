@@ -37,7 +37,7 @@ public class GiftsController {
 		double totalPoints;
 		GiftsResponse giftsResponse;
 		try {
-			Users user = userRepository.findByUserName(userName).get(0);
+			Users user = userRepository.findByUserNameIgnoreCase(userName).get(0);
 			giftsResponse = new GiftsResponse();
 			totalPoints = pointsHistoryRepository.getTotalUserNetPoints(user);
 			giftsResponse.setTotalPoints(totalPoints);
@@ -70,7 +70,7 @@ public class GiftsController {
 		Response response = new Response();
 		try {
 			double usedPoints = userRequest.getTotalPoints();
-			Users user = userRepository.findByUserName(userRequest.getUserName()).get(0);
+			Users user = userRepository.findByUserNameIgnoreCase(userRequest.getUserName()).get(0);
 			user.setTotalPoints(user.getTotalPoints() - usedPoints);
 			PointsHistory pointsRecord = pointsHistoryRepository.getLastPointsRecord(user).get(0);
 			pointsRecord.setUsedPoints(pointsRecord.getUsedPoints() + usedPoints);

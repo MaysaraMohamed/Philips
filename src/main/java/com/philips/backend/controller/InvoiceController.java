@@ -118,7 +118,7 @@ public class InvoiceController {
 		}
 		SubmitedInvoice submitedInvoice = new SubmitedInvoice();
 		submitedInvoice.setSalesId(invoice.getSalesId());
-		submitedInvoice.setUser(userRepository.findByUserName(invoice.getUserName()).get(0));
+		submitedInvoice.setUser(userRepository.findByUserNameIgnoreCase(invoice.getUserName()).get(0));
 		submitedInvoice.setExtras(invoice.getExtras());
 		submitedInvoice.setInvoiceDate(invoice.getInvoiceDate());
 		submitedInvoice.setSubmissionDate(new Date());
@@ -126,6 +126,7 @@ public class InvoiceController {
 		submitedInvoiceRepository.save(submitedInvoice);
 		
 		double totalNetSale=0; 
+		List<SubmitedInvoiceCategories> submitedInvoiceCategoriesList = new ArrayList<>(); 
 		List<String> categories = invoice.getCategories();
 		if (submitedInvoiceCategoriesRepository.findBySubmitedInvoice(submitedInvoice).size() > 0)
 			submitedInvoiceCategoriesRepository.deleteBySubmitedInvoice(submitedInvoice);
@@ -139,12 +140,15 @@ public class InvoiceController {
 				submitedInvoiceCategories.setCategory(categoryRepository.findByArCategoryName(categoryName));
 			}
 			totalNetSale +=netSale; 
+			submitedInvoiceCategoriesList.add(submitedInvoiceCategories);
 			submitedInvoiceCategories.setNetSale(netSale);
 			submitedInvoiceCategories.setSubmitedInvoice(submitedInvoice);
 			submitedInvoiceCategoriesRepository.save(submitedInvoiceCategories);
 		}
 		// Update pending points. 
-		submitedInvoice.setInvoicePoints(daemonController.getPointsForNetSale(totalNetSale));
+//		submitedInvoice.setInvoicePoints(daemonController.getPointsForNetSale(totalNetSale));
+		submitedInvoice.setInvoicePoints(daemonController.getPointsForsubmitedInvoiceCategories(submitedInvoiceCategoriesList));
+		submitedInvoice.setTotalNetSale(totalNetSale); 
 		submitedInvoiceRepository.save(submitedInvoice);
 		response.setStatus(200);
 		response.setMessage("SUCCESS");
@@ -216,7 +220,7 @@ public class InvoiceController {
 	@RequestMapping("/submitedInvoices/{userName}")
 	public Object getSubmitedInvoiceRequest(@PathVariable String userName) {
 		try {
-		Users user = userRepository.findByUserName(userName).get(0);
+		Users user = userRepository.findByUserNameIgnoreCase(userName).get(0);
 		return submitedInvoiceRepository.findTop20ByUserOrderBySubmissionDateDesc(user);
 		}catch (Exception e) {
 			LOGGER.warning(e.toString());
